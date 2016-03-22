@@ -13,7 +13,7 @@ var config = make(map[string]string)
 
 // initialize default values
 func init() {
-	config["server.listen"] = ":10666"
+	config["server.host"] = ":10666"
 	// more default options to be added there
 }
 
