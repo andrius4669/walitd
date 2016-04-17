@@ -1,34 +1,47 @@
 package main
 
 import (
-	"../configmgr"
+	cfg "../configmgr"
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
+	str "strings"
 	//"../hostutil"
-	"../forum_rdr"
+	"../forum"
 	"../main_rdr"
+	"../news"
+	"../poll"
+	"../users"
 )
 
 var configFile = "config.ini"
 
-type HandlerType struct{}
+type handlerType struct{}
 
-func (HandlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "" {
 		r.URL.Path = "/"
+	} else if r.URL.Path[0] != '/' {
+		r.URL.Path = "/" + r.URL.Path
 	}
-	path := r.URL.Path[1:]
-	i := strings.IndexByte(r.URL.Path, '/')
-	if i >= 0 {
-		switch path[:i] {
-		case "f":
-			forum_rdr.HandleRequest(w, r, i)
+	if i := str.IndexByte(r.URL.Path[1:], '/'); i >= 0 {
+		i++
+		switch r.URL.Path[1:i] {
+		case "users": // users subsystem
+			users.HandleRequest(w, r, i)
+			return
+		case "forum": // forum subsystem
+			forum.HandleRequest(w, r, i)
+			return
+		case "news": // news subsystem
+			news.HandleRequest(w, r, i)
+			return
+		case "poll": // poll subsystem
+			poll.HandleRequest(w, r, i)
 			return
 		}
 	}
-
+	// main page handler
 	main_rdr.HandleRequest(w, r)
 }
 
@@ -40,9 +53,10 @@ func main() {
 			return
 		}
 		if len(os.Args[i]) < 2 {
-			continue
+			continue // literal '-'
 		}
 		if len(os.Args[i]) > 2 {
+			// can't handle multiple options in one argument yet
 			fmt.Fprintf(os.Stderr, "please split options: %s\n", os.Args[i])
 			return
 		}
@@ -65,11 +79,12 @@ func main() {
 	}
 	if configFile != "" {
 		// load config
-		err := configmgr.LoadConfig(configFile)
+		err := cfg.LoadConfig(configFile)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error reading config: %s\n", err)
 		}
 	}
 	// k..
-	http.ListenAndServe(configmgr.GetListenHost(), &HandlerType{})
+	http.ListenAndServe(cfg.GetListenHost(), &handlerType{})
+	// TODO(andrius) error handling
 }

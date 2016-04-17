@@ -6,20 +6,41 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"sync"
 )
 
 // braindead config storage
 var config = make(map[string]string)
+var configInitialized bool
+var configLock sync.RWMutex
 
 // initialize default values
 func init() {
+	configLock.Lock()
+	defer configLock.Unlock()
+
 	config["server.host"] = ":10666"
+	config["render.templatedir"] = "templates"
+	config["forum.filedir"] = "forum"
+	config["forum.srcdir"] = "src"
+	config["forum.thumbdir"] = "thumb"
+	config["forum.staticdir"] = "static"
+	config["forum.boardstaticdir"] = "static"
 	// more default options to be added there
+	configInitialized = true
 }
 
 // load config from file
 // being totally lazy there. but meh not expecting big config files
 func LoadConfig(fname string) error {
+	configLock.Lock()
+	defer configLock.Unlock()
+
+	// this func shouldn't be called before init
+	if !configInitialized {
+		panic("config module not yet initialized!!!")
+	}
+
 	buf, err := ioutil.ReadFile(fname)
 	if err != nil {
 		return err
@@ -102,13 +123,19 @@ func LoadConfig(fname string) error {
 					opt := strings.ToLower(string(lines[i][start:]))
 					switch opt {
 					case "yes":
+						fallthrough
 					case "on":
+						fallthrough
 					case "true":
+						fallthrough
 					case "1":
 						config[currentsection+"."+valname] = ""
 					case "no":
+						fallthrough
 					case "off":
+						fallthrough
 					case "false":
+						fallthrough
 					case "0":
 						delete(config, currentsection+"."+valname)
 					default:
@@ -122,6 +149,13 @@ func LoadConfig(fname string) error {
 }
 
 func GetOption(name string) (string, bool) {
+	configLock.RLock()
+	defer configLock.RUnlock()
+
+	if !configInitialized {
+		panic("config module not yet initialized!!!")
+	}
+
 	s, k := config[name]
 	return s, k
 }
