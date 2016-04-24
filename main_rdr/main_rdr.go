@@ -32,9 +32,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// else, 404
-		http.Error(w, fmt.Sprintf("404 page not found: %s", r.URL.Path), 404)
-		//http.NotFound(w, r)
+		http.NotFound(w, r)
 	} else {
-		http.Error(w, "501 not implemented", 501)
+		http.Error(w, "501 method not implemented", 501)
 	}
 }

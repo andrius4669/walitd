@@ -17,9 +17,37 @@ func LoadTemplates() {
 	render.Load("postedit", "f/postedit.tmpl")     // allows editing existing post
 }
 
-func reservedBoardName(name string) bool {
-	return name == "mod" || name == "static"
-}
+/*
+current GET/HEAD scheme:
+/                 - list all boards
+/static/x         - x static file
+/mod/             - moderate board list
+/a/               - /a/ board's first page
+/a/1              - same as above
+/a/2              - /a/ board's second page
+^ any number without trailing / can be used
+/mod/a            - /a/ board's moderation page (board settings)
+^ TODO decide should be /mod/a or /mod/a/ ((currently /mod/a))
+/a/thread/123     - normal view of /a/ board's thread 123
+/a/src/x          - source file x view
+/a/thumb/x        - thumb file x view
+/a/static/x       - static file x view
+/a/mod/           - /a/ board's first page in moderator mode
+/a/mod/1          - same as above
+/a/mod/2          - /a/ board's second page in moderator mode
+/a/mod/thread/123 - moderator view of /a/ board's thread 123
+-- due to current scheme mod & static cannot be used as board names
+current POST scheme:
+TODO decide
+- allow board creation (mods/anyone?)
+- allow board settings modification (mods/BO?)
+- allow board delete (mods/BO?)
+- allow creating thread in existing board (possibly restricted)
+- allow setting options for thread (mods/BO?)
+- allow posting in existing thread (possibly restricted)
+- allow deleting existing thread/post (mods / BO? / thread/post maker?)
+- allow editing/updating existing post (for mods/BO?)
+*/
 
 func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 	rpath := r.URL.Path[pathi+1:]
@@ -119,9 +147,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		http.NotFound(w, r)
 		return
 	} else if r.Method == "POST" {
-		// TODO(andrius) implement posting
-		http.Error(w, "501 not implemented", 501)
+		// TODO(andrius) decide & implement posting
+		http.Error(w, "501 POST routines not yet implemented", 501)
 	} else {
-		http.Error(w, "501 not implemented", 501)
+		http.Error(w, "501 method not implemented", 501)
 	}
 }

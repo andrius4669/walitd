@@ -1,5 +1,10 @@
 package forum
 
+/*
+ * most of stuff in this file isn't really about serving itself,
+ * but about validation & providing right paths to files.ServeFileOr404 function
+ */
+
 import (
 	cfg "../configmgr"
 	"../files"
