@@ -104,7 +104,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			n, err := strconv.ParseUint(rpath, 10, 32)
 			if err == nil {
 				// render nth page
-				renderBoardPage(w, r, board, uint32(n), false)
+				renderBoardPage(w, r, board, uint32(n), mod)
 			} else {
 				// append /
 				http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
