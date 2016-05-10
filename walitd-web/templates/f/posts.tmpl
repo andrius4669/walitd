@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>{{.Board}} - #{{.Thread.ID}}</title>
+<link rel="stylesheet" type="text/css" href="/forum/static/site.css" />
+</head>
+<body>
+
+<div class="navigation">
+<a href="/forum/">Forum</a>
+&gt; <a href="/forum/{{.Board}}/">/{{.Board}}/</a>
+{{if .Mod}}&gt; <a href="/forum/{{.Board}}/mod/">mod</a>{{end}}
+&gt; <a href="./{{.Thread.ID}}">#{{.Thread.ID}}</a>
+</div>
+
+<table class="posts" style="width: 100%;">
+
+{{with .Thread.OP}}
+
+<tr>
+<td class="postuser">
+
+{{with .UserIdent}}
+{{- if .User -}}
+{{.User.UserName | html}}
+{{- else -}}
+{{- if .HasEmail -}}
+<a class="email" href="mailto:{{.Email | urlquery}}">
+{{- else -}}
+<span class="name">
+{{- end -}}
+
+{{- if .HasName -}}{{- .Name -}}{{- else -}}Anonymous{{- end -}}
+{{- if .HasTrip}} <span class="trip">{{.Trip | html}}</span>{{- end -}}
+
+{{- if .HasEmail -}}
+</a>
+{{- else -}}
+</span>
+{{- end -}}
+{{- end -}}
+{{end}}
+
+</td>
+
+<td class="postbody">
+
+<div class="postheader">
+{{.Title | html}}
+<div style="float: right;">
+<b>{{date .Date}}</b>
+<a href="/forum/{{$.Board}}/{{if $.Mod}}mod/{{end}}thread/{{$.Thread.ID}}#{{.PostID}}">#</a>{{.PostID}}
+</div>
+</div>
+
+{{.FMessage}}
+
+</td>
+</tr>
+
+{{end}}
+
+{{range .Thread.Replies}}
+
+<tr>
+<td class="postuser">
+
+{{with .UserIdent}}
+{{- if .User -}}
+{{.User.UserName | html}}
+{{- else -}}
+{{- if .HasEmail -}}
+<a class="email" href="mailto:{{.Email | urlquery}}">
+{{- else -}}
+<span class="name">
+{{- end -}}
+
+{{- if .HasName -}}{{- .Name -}}{{- else -}}Anonymous{{- end -}}
+{{- if .HasTrip}} <span class="trip">{{.Trip | html}}</span>{{- end -}}
+
+{{- if .HasEmail -}}
+</a>
+{{- else -}}
+</span>
+{{- end -}}
+{{- end -}}
+{{end}}
+
+</td>
+
+<td class="postbody">
+
+<div class="postheader">
+{{.Title | html}}
+<div style="float: right;">
+<b>{{date .Date}}</b>
+<a href="/forum/{{$.Board}}/{{if $.Mod}}mod/{{end}}thread/{{$.Thread.ID}}#{{.PostID}}">#</a>{{.PostID}}
+</div>
+</div>
+
+{{.FMessage}}
+
+</td>
+</tr>
+
+{{end}}
+
+</table>
+
+</body>
+</html>

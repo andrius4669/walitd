@@ -19,12 +19,20 @@ import (
 var templates *template.Template
 var templatesLock sync.RWMutex
 
+func initialize() {
+	templates = template.New("root")
+	var funcs = make(template.FuncMap)
+	funcs["date"] = date
+	funcs["inc"] = inc
+	templates.Funcs(funcs)
+}
+
 func init() {
 	templatesLock.Lock()
 	defer templatesLock.Unlock()
 
 	if templates == nil {
-		templates = template.New("root")
+		initialize()
 	}
 }
 
@@ -57,7 +65,7 @@ func Load(name, filename string) {
 	defer templatesLock.Unlock()
 
 	if templates == nil {
-		templates = template.New("root")
+		initialize()
 	}
 
 	if tmpldir, _ := cfg.GetOption("render.templatedir"); tmpldir != "" {

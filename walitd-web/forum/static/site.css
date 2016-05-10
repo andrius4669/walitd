@@ -1,0 +1,64 @@
+body, table {
+	font-family: arial,sans-serif,helvetica;
+	font-size: 13px;
+}
+
+table.posts {
+	border: 0px none black;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+td.postuser {
+	height: 60px;
+	width: 165px;
+}
+
+td.postbody {
+	vertical-align: top;
+}
+
+td.postuser, td.postbody {
+	border: 1px dashed black;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+.name {
+	font-weight: bold;
+	color: #227744;
+}
+
+.trip {
+	color: #227744;
+	font-weight: normal;
+}
+
+.email {
+	font-weight: bold;
+	color: #113366;
+}
+
+.navigation {
+	background-color: #AAFFAA;
+}
+
+.boardlist {
+	background-color: #BBBBFF;
+}
+
+.threadlist {
+	background-color: #BBBBFF;
+}
+
+.boardpages {
+	background-color: #AAFFAA;
+}
+
+.activepage {
+	background-color: #EE8888;
+}
+
+.postheader {
+	background-color: #EE8888;
+}

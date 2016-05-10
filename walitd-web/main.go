@@ -84,6 +84,8 @@ func main() {
 			fmt.Fprintf(os.Stderr, "error reading config: %s\n", err)
 		}
 	}
+	// load templates which modules may use
+	forum.LoadTemplates()
 	// k..
 	http.ListenAndServe(cfg.GetListenHost(), &handlerType{})
 	// TODO(andrius) error handling

@@ -13,11 +13,15 @@ func ServeFile(w http.ResponseWriter, r *http.Request, fname string) bool {
 	}
 	defer f.Close()
 
+	// TODO(andrius) determine mime type on our own and set relevant header before http.ServeContent
+	// golang's integrated mime detection is shit
+
 	fi, err := f.Stat()
 	if err == nil {
 		http.ServeContent(w, r, fname, fi.ModTime(), f)
 	} else {
-		http.ServeContent(w, r, fname, time.Time{}, f)
+		// if for some weird reason we fail to stat file...
+		http.ServeContent(w, r, fname, time.Now(), f)
 	}
 	return true
 }

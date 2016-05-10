@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>/{{.Board}}/ - {{.Topic | html}}</title>
+<link rel="stylesheet" type="text/css" href="/forum/static/site.css" />
+</head>
+<body>
+<div class="navigation">
+<a href="/forum/">Forum</a>
+&gt; <a href="/forum/{{.Board}}/">/{{.Board}}/</a>
+{{if .Mod}}&gt; <a href="/forum/{{.Board}}/mod/">mod</a>{{end}}
+</div>
+<table class="threadlist">
+<tr>
+<th>ID</th>
+<th>Subject</th>
+<th>Started by</th>
+<th>Replies</th>
+<th>Last post</th>
+</tr>
+{{range .Threads -}}
+<tr>
+<td><a href="thread/{{.ID}}">#{{.ID}}</a></td>
+<td><a href="thread/{{.ID}}/{{.Title | urlquery}}">{{.Title}}</a></td>
+<td>
+{{- if .OP.User -}}
+{{- /* dunno what scheme I should use for users */ -}}
+{{.OP.User.UserName | html}}
+{{- else -}}
+{{- if .OP.HasEmail -}}
+<a class="email" href="mailto:{{.OP.Email | urlquery}}">
+{{- else -}}
+<span class="name">
+{{- end -}}
+
+{{- if .OP.HasName -}}{{- .OP.Name -}}{{- else -}}Anonymous{{- end -}}
+{{- if .OP.HasTrip -}}<span class="trip">{{.Trip | html}}</span>{{- end -}}
+
+{{- if .OP.HasEmail -}}
+</a>
+{{- else -}}
+</span>
+{{- end -}}
+{{- end -}}
+</td>
+<td>{{.Replies}}</td>
+<td>
+<a href="thread/{{.ID}}#{{.LastID}}">{{date .Bump}}</a> by
+{{if .OP.User -}}
+{{- /* dunno what scheme I should use for users */ -}}
+{{.OP.User.UserName | html}}
+{{else -}}
+{{- if .OP.HasEmail -}}
+<a class="email" href="mailto:{{.OP.Email | urlquery}}">
+{{- else -}}
+<span class="name">
+{{- end -}}
+
+{{- if .OP.HasName -}}{{- .OP.Name -}}{{- else -}}Anonymous{{- end -}}
+{{- if .OP.HasTrip -}}<span class="trip">{{.Trip | html}}</span>{{- end -}}
+
+{{- if .OP.HasEmail -}}
+</a>
+{{- else -}}
+</span>
+{{- end -}}
+{{- end -}}
+</td>
+</tr>
+{{end -}}
+</table>
+<table class="boardpages">
+<tr>
+{{range $index, $page := .Pages -}}
+{{$ri := inc $index}}
+{{if (eq $ri $.CurrentPage)}}<th class="activepage">{{else}}<td>{{end}}
+{{if $page}}<a href="{{if (ne $ri 1)}}{{$ri}}{{else}}./{{end}}">{{$ri}}</a>{{else}}{{$ri}}{{end}}
+{{if (eq $ri $.CurrentPage)}}</th>{{else}}</td>{{end}}
+{{end -}}
+</tr>
+</table>
+</body>
+</html>

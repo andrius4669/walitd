@@ -19,10 +19,10 @@ func queryThread(db *sql.DB, board, thread string) bool {
 	var err error
 	// no casting for multiple return values. no nested funcs too. fuck you golang.
 	// I hope this shit will atleast get inlined.
-	cst := func(i uint64, e error) (uint32, error) {
+	intcst := func(i uint64, e error) (uint32, error) {
 		return uint32(i), e
 	}
-	_, err = cst(strconv.ParseUint(thread, 10, 32))
+	_, err = intcst(strconv.ParseUint(thread, 10, 32))
 	if err != nil {
 		return false
 	}
