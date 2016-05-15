@@ -122,21 +122,9 @@ func LoadConfig(fname string) error {
 				} else {
 					opt := strings.ToLower(string(lines[i][start:]))
 					switch opt {
-					case "yes":
-						fallthrough
-					case "on":
-						fallthrough
-					case "true":
-						fallthrough
-					case "1":
+					case "yes": case "on": case "true": case "1":
 						config[currentsection+"."+valname] = ""
-					case "no":
-						fallthrough
-					case "off":
-						fallthrough
-					case "false":
-						fallthrough
-					case "0":
+					case "no": case "off": case "false": case "0":
 						delete(config, currentsection+"."+valname)
 					default:
 						fmt.Fprintf(os.Stderr, "cfg: unrecognised special setting: %s\n", lines[i])

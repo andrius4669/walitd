@@ -62,16 +62,27 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 	p.FMessage = "lol this is message"
 	p.References = append(p.References, 124)
 	p.References = append(p.References, 125)
+	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
 	page.Thread.OP = p
 	p.PostID = 124
 	p.UserIdent.Name = "wandalizorours"
 	p.UserIdent.Trip = "!aksa6df54a1"
 	p.References = nil
 	p.References = append(p.References, 125)
+	p.Files = nil
 	page.Thread.Replies = append(page.Thread.Replies, p)
 	p.PostID = 125
 	p.UserIdent.Email = "sage"
 	p.References = nil
+	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
+	p.Files = append(p.Files, fileContent{Name: "/deleted", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
+	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
+	page.Thread.Replies = append(page.Thread.Replies, p)
+	p.PostID = 126
+	p.UserIdent.Name = ""
+	page.Thread.Replies = append(page.Thread.Replies, p)
+	p.PostID = 127
+	p.UserIdent.Email = ""
 	page.Thread.Replies = append(page.Thread.Replies, p)
 	render.Execute(w, "posts", page)
 	//http.Error(w, fmt.Sprintf("501 board %s thread %s (mod: %t) not implemented", board, thread, mod), 501)

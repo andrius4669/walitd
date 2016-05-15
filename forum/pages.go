@@ -22,6 +22,22 @@ type fileContent struct {
 	Thumb    string // physical filename of thumbnail
 }
 
+func (f *fileContent) Valid() bool {
+	return len(f.Name) > 0 && f.Name[0] != '/'
+}
+
+func (f *fileContent) VName() string {
+	if f.Valid() {
+		return f.Name
+	} else {
+		if len(f.Name) > 0 {
+			return "[" + f.Name[1:] + "]"
+		} else {
+			return ""
+		}
+	}
+}
+
 type userIdent struct {
 	Name  string          // name
 	Trip  string          // tripcode

@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+//func queryMain
+
 func queryThread(db *sql.DB, board, thread string) bool {
 	// sanity checks first
 	if !validBoardName(board) {

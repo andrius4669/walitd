@@ -24,6 +24,7 @@ func initialize() {
 	var funcs = make(template.FuncMap)
 	funcs["date"] = date
 	funcs["inc"] = inc
+	funcs["urlfile"] = urlfile
 	templates.Funcs(funcs)
 }
 

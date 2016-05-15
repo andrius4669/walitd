@@ -29,8 +29,8 @@
 <span class="name">
 {{- end -}}
 
-{{- if .HasName -}}{{- .Name -}}{{- else -}}Anonymous{{- end -}}
-{{- if .HasTrip}} <span class="trip">{{.Trip | html}}</span>{{- end -}}
+{{if .HasName}}{{.Name}} {{else}}{{if (not .HasTrip)}}Anonymous {{end}}{{end -}}
+{{if .HasTrip}}<span class="trip">{{.Trip | html}}</span>{{end -}}
 
 {{- if .HasEmail -}}
 </a>
@@ -44,13 +44,41 @@
 
 <td class="postbody">
 
-<div class="postheader">
+<div class="postheader" id="{{.PostID}}">
 {{.Title | html}}
-<div style="float: right;">
+<div class="postinfo">
 <b>{{date .Date}}</b>
-<a href="/forum/{{$.Board}}/{{if $.Mod}}mod/{{end}}thread/{{$.Thread.ID}}#{{.PostID}}">#</a>{{.PostID}}
+<a href="#{{.PostID}}">#</a>{{.PostID}}&nbsp;
 </div>
 </div>
+
+{{if (gt (len .References) 0) -}}
+<div class="replies">
+{{range .References -}}
+<a href="#{{.}}">&gt;&gt;{{.}}</a>
+{{end -}}
+</div>
+{{end -}}
+
+{{if (gt (len .Files) 0) -}}
+<div class="attachments">
+{{range .Files -}}
+<div class="fcontainer">
+<p style="margin-bottom:0; margin-top: 0">
+{{- if .Valid -}}
+<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}/{{urlfile .Original}}">
+{{- end -}}
+{{html .Original}}
+{{- if .Valid -}}
+</a>
+{{- end -}}
+</p>
+{{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.Thumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
+</div>
+{{end -}}
+<div style="clear: both;"></div>
+</div>
+{{end -}}
 
 {{.FMessage}}
 
@@ -59,7 +87,7 @@
 
 {{end}}
 
-{{range .Thread.Replies}}
+{{range .Thread.Replies -}}
 
 <tr>
 <td class="postuser">
@@ -74,8 +102,8 @@
 <span class="name">
 {{- end -}}
 
-{{- if .HasName -}}{{- .Name -}}{{- else -}}Anonymous{{- end -}}
-{{- if .HasTrip}} <span class="trip">{{.Trip | html}}</span>{{- end -}}
+{{if .HasName}}{{.Name}} {{else}}{{if (not .HasTrip)}}Anonymous {{end}}{{end -}}
+{{if .HasTrip}}<span class="trip">{{.Trip | html}}</span>{{end -}}
 
 {{- if .HasEmail -}}
 </a>
@@ -87,15 +115,43 @@
 
 </td>
 
-<td class="postbody">
+<td class="postbody" style="position: relative;">
 
-<div class="postheader">
+<div class="postheader" id="{{.PostID}}">
 {{.Title | html}}
-<div style="float: right;">
+<div class="postinfo">
 <b>{{date .Date}}</b>
-<a href="/forum/{{$.Board}}/{{if $.Mod}}mod/{{end}}thread/{{$.Thread.ID}}#{{.PostID}}">#</a>{{.PostID}}
+<a href="#{{.PostID}}">#</a>{{.PostID}}&nbsp;
 </div>
 </div>
+
+{{if (gt (len .References) 0) -}}
+<div class="replies">
+{{range .References -}}
+<a href="#{{.}}">&gt;&gt;{{.}}</a>
+{{end -}}
+</div>
+{{end -}}
+
+{{if (gt (len .Files) 0) -}}
+<div class="attachments">
+{{range .Files -}}
+<div class="fcontainer">
+<p style="margin-bottom:0; margin-top: 0">
+{{- if .Valid -}}
+<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}/{{urlfile .Original}}">
+{{- end -}}
+{{html .Original}}
+{{- if .Valid -}}
+</a>
+{{- end -}}
+</p>
+{{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.Thumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
+</div>
+{{end -}}
+<div style="clear: both;"></div>
+</div>
+{{end -}}
 
 {{.FMessage}}
 

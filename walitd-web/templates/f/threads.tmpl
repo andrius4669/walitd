@@ -20,7 +20,7 @@
 {{range .Threads -}}
 <tr>
 <td><a href="thread/{{.ID}}">#{{.ID}}</a></td>
-<td><a href="thread/{{.ID}}/{{.Title | urlquery}}">{{.Title}}</a></td>
+<td><a href="thread/{{.ID}}">{{.Title}}</a></td>
 <td>
 {{- if .OP.User -}}
 {{- /* dunno what scheme I should use for users */ -}}

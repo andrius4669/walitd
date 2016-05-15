@@ -9,19 +9,21 @@ table.posts {
 	margin: 0px 0px 0px 0px;
 }
 
-td.postuser {
-	height: 60px;
-	width: 165px;
-}
-
-td.postbody {
-	vertical-align: top;
-}
-
 td.postuser, td.postbody {
 	border: 1px dashed black;
 	padding: 0px 0px 0px 0px;
 	margin: 0px 0px 0px 0px;
+}
+
+td.postuser {
+	height: 60px;
+	width: 165px;
+	background-color: #DDFFDD;
+	padding-left: 4px;
+}
+
+td.postbody {
+	vertical-align: top;
 }
 
 .name {
@@ -59,6 +61,34 @@ td.postuser, td.postbody {
 	background-color: #EE8888;
 }
 
+.postbody {
+	background-color: #EEFFEE;
+}
+
 .postheader {
-	background-color: #EE8888;
+	background-color: #88EE88;
+	font-weight: bold;
+	color: black;
+}
+
+.postinfo {
+	float: right;
+	color: black;
+}
+
+.attachments {
+	background-color: #CCFFCC;
+}
+
+.replies {
+	background-color: #88EE88;
+	font-size: 10px;
+}
+
+.fcontainer {
+	float: left;
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-top: 2px;
+	margin-bottom: 4px;
 }
