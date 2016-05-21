@@ -3,6 +3,7 @@ package users
 
 func renderLoginPage(w http.ResponseWriter, r *http.Request)  {
 	http.Error(w, "Login page not implemented", 501);
+	//page := new(boardPage)
 }
 func renderCreateFriendListPage(w http.ResponseWriter, r *http.Request)  {
 	http.Error(w, "Register page not implemented", 501);
