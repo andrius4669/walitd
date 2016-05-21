@@ -1,5 +1,11 @@
 package forum
 
+func panicErr(err error) {
+    if err != nil {
+        panic(err)
+    }
+}
+
 func validBoardName(board string) bool {
 	slen := len(board)
 	if slen > 64 {

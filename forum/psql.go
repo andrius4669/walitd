@@ -21,7 +21,7 @@ func queryBoardList(db *sql.DB, p *frontPage) {
 		p.Boards = append(p.Boards, b)
 	}
 }
-
+/*
 type threadInfo struct {
 	ID       uint32
 	Title    string
@@ -41,7 +41,7 @@ type boardPage struct {
 	CurrentPage uint32
 	Mod         bool // whether viewing in moderator mode or not
 }
-
+*/
 func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) bool {
 	var attributesjson []byte
 	err := db.QueryRow("SELECT board, topic, description, attributes FROM boards WHERE board=$1", board).Scan(&p.Board, &p.Topic, &p.Description, &attributesjson)
@@ -115,12 +115,13 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		err = db.QueryRow("SELECT title, user, pname, trip, email FROM posts WHERE board=$1 AND postid=$2", board, p.Threads[i].ID).Scan(&p.Threads[i].Title, &uid, &p.Threads[i].OP.Name, &p.Threads[i].OP.Trip, &p.Threads[i].OP.Email)
 		panicErr(err)
 		if uid.Valid {
-			p.Threads[i].OP.User = users.GetUserInfo(uint32(uid.Value))
+			p.Threads[i].OP.User = users.GetUserInfo(uint32(uid.Int64))
 		}
 		// get info on last post
-		err = db.QueryRow("SELECT postid, user, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", board, p.Threads[i].ID).Scan(&p.Threads[i].
+		//err = db.QueryRow("SELECT postid, user, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", board, p.Threads[i].ID).Scan(&p.Threads[i].
 	}
-
+	return false
+/*
 	for i := range b.Threads {
 		{
 			var op fullPostInfo
@@ -154,6 +155,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 			b.Threads[i].postMap[p.Id] = len(b.Threads[i].Replies)
 		}
 	}
+	*/
 }
 
 //func queryMain
