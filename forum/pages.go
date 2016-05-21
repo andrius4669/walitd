@@ -58,9 +58,9 @@ func (i *userIdent) HasEmail() bool {
 }
 
 type postContent struct {
-	PostID     uint32 // ID of post
-	Title      string // title of message
-	UserIdent  userIdent
+	PostID     uint32        // ID of post
+	Title      string        // title of message
+	UserIdent  userIdent     // identity of poster
 	Date       time.Time     // exact time message was posted
 	Message    string        // text of message
 	Files      []fileContent // post files

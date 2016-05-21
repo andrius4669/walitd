@@ -87,14 +87,13 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		p.Threads = append(p.Threads, t)
 	}
 
-
 	// if no threads and no limit, only show existing threads
 	if len(p.Threads) == 0 && page != 1 && pagelimit == 0 {
 		return false
 	}
 
 	var allthreads uint32
-	err = db.QueryRow("SELECT COUNT(*) FROM threads WHERE board=$1", board).Scan(&allthreads)
+	err = db.QueryRow("SELECT COUNT(*) FROM threads WHERE boardid=$1", bid).Scan(&allthreads)
 	panicErr(err)
 
 	var cp uint32
@@ -114,14 +113,21 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	for i := range p.Threads {
 		// get stuff from OP
 		var uid sql.NullInt64
-		err = db.QueryRow("SELECT title, user, pname, trip, email FROM posts WHERE board=$1 AND postid=$2", board, p.Threads[i].ID).Scan(&p.Threads[i].Title, &uid, &p.Threads[i].OP.Name, &p.Threads[i].OP.Trip, &p.Threads[i].OP.Email)
+		err = db.QueryRow("SELECT title, user, pname, trip, email FROM posts WHERE boardid=$1 AND postid=$2", bid, p.Threads[i].ID).Scan(&p.Threads[i].Title, &uid, &p.Threads[i].OP.Name, &p.Threads[i].OP.Trip, &p.Threads[i].OP.Email)
 		panicErr(err)
 		if uid.Valid {
 			p.Threads[i].OP.User = users.GetUserInfo(uint32(uid.Int64))
 		}
 		// get info on last post
-		err = db.QueryRow("SELECT postid, user, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", board, p.Threads[i].ID).Scan(&p.Threads[i].
+		err = db.QueryRow("SELECT postid, user, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", bid, p.Threads[i].ID).Scan(&p.Threads[i].LastID, &uid, &p.Threads[i].Last.Name, &p.Threads[i].Last.Trip, &p.Threads[i].Last.Email, &p.Threads[i].LastDate)
+		panicErr(err)
+		if uid.Valid {
+			p.Threads[i].Last.User = users.GetUserInfo(uint32(uid.Int64))
+		}
 	}
+
+
+
 	return false
 /*
 	for i := range b.Threads {
