@@ -50,7 +50,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		return false
 	}
 	panicErr(err)
-    p.Board = board
+	p.Board = board
 
 	type attributes struct {
 		PageLimit *uint32
@@ -79,7 +79,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		return false
 	}
 
-	rows, err := db.Query("SELECT thread, bump FROM threads WHERE board=$1 ORDER BY bump DESC LIMIT $2 OFFSET $3", board, tpp, (page - 1) * tpp)
+	rows, err := db.Query("SELECT threadid, bump FROM threads WHERE boardid=$1 ORDER BY bump DESC LIMIT $2 OFFSET $3", bid, tpp, (page - 1) * tpp)
 	panicErr(err)
 	for rows.Next() {
 		var t threadInfo
