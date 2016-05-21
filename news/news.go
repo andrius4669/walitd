@@ -1,7 +1,10 @@
 package news
 
 import (
+	"../render"
 	"net/http"
+	str "strings"
+	//"strconv"
 )
 
 func LoadTemplates() {
@@ -11,6 +14,7 @@ func LoadTemplates() {
 	//render.Load("threads", "f/threads.tmpl") // shows whole board. for mods with extra options
 	//render.Load("posts", "f/posts.tmpl")     // shows all posts in thread
 	//render.Load("postedit", "f/postedit.tmpl")     // allows editing existing post
+	render.Load("list", "articles/list.tmpl")
 }
 
 func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
@@ -34,7 +38,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				renderArticlesList(w, r)
 			} else {
 				// display moderation page for specific board. possibly will check for admin
-				renderArticles(w, r, rpath[i+1:])
+				//renderArticles(w, r, rpath[i+1:])
 			}
 			return
 		}
@@ -67,6 +71,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			return
 		}
 		i = str.IndexByte(rpath, '/')
+
+		/*
 		if i < 0 {
 			n, err := strconv.ParseUint(rpath, 10, 32)
 			if err == nil {
@@ -78,6 +84,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			}
 			return
 		}
+		*/
 		//group := rpath[:i]
 		//rpath = rpath[i+1:]
 
