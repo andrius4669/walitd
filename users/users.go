@@ -1,11 +1,11 @@
 package users
 
 import (
-	"fmt"
+//	"fmt"
 	"../render"
 	"net/http"
 //	"strconv"
-	//str "strings"
+	str "strings"
 )
 
 func LoadTemplates() {
@@ -34,40 +34,53 @@ func LoadTemplates() {
 func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 	rpath := r.URL.Path[pathi+1:]
 	if r.Method == "GET" || r.Method == "HEAD" {
-		if rpath == "" {
-			renderArticlesList(w, r)
-			return
-		}
-		i := str.IndexByte(rpath, '/')
-		if i == -1 {
-			// syntax is /zzz/ not /zzz in all GET/HEAD cases
-			http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
-			return
-		}
-		if rpath[:i] == "articles" {
-			if rpath[i+1:] == "" {
-				// Display list of news
-				renderArticlesList(w, r)
-			} else {
+		if (true){ //TODO: if not logged redirect to login page
+			if rpath == "" {
+				renderGroupsPage(w, r)
+				return
 			}
+			i := str.IndexByte(rpath, '/')
+			if i == -1 {
+				// syntax is /zzz/ not /zzz in all GET/HEAD cases
+				http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
+				return
+			}
+			if rpath[:i] == "messages" {
+				if rpath[i+1:] == "" {
+					// Display list of news
+					renderMessagesPage(w, r)
+				} else {
+				}
+				return
+			}
+
+			if rpath == "" {
+
+				return
+			}
+			i = str.IndexByte(rpath, '/')
+
+
+			if rpath == "" {
+				// be lazy there :^)
+				http.Redirect(w, r, "../", http.StatusFound)
+				return
+			}
+
+			http.NotFound(w, r)
 			return
+		} else{
+			i := str.IndexByte(rpath, '/')
+			if rpath[:i] == "register" {
+				if rpath[i+1:] == "" {
+					// Display list of news
+					renderRegisterPage(w, r)
+				}
+				return
+			}
+			// else render login page
+			renderLoginPage(w, r);
 		}
-
-		if rpath == "" {
-
-			return
-		}
-		i = str.IndexByte(rpath, '/')
-
-
-		if rpath == "" {
-			// be lazy there :^)
-			http.Redirect(w, r, "../", http.StatusFound)
-			return
-		}
-
-		http.NotFound(w, r)
-		return
 	} else if r.Method == "POST" {
 		// TODO(andrius) decide & implement posting
 		http.Error(w, "501 POST routines not yet implemented", 501)
