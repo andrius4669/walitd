@@ -22,48 +22,50 @@
 <td><a href="thread/{{.ID}}">#{{.ID}}</a></td>
 <td><a href="thread/{{.ID}}">{{.Title}}</a></td>
 <td>
-{{- if .OP.User -}}
-{{- /* dunno what scheme I should use for users */ -}}
-{{.OP.User.UserName | html}}
+{{with .OP}}
+{{- if .User -}}
+{{.User.UserName | html}}
 {{- else -}}
-{{- if .OP.HasEmail -}}
-<a class="email" href="mailto:{{.OP.Email | urlquery}}">
+{{- if .HasEmail -}}
+<a class="email" href="mailto:{{.Email | urlquery}}">
 {{- else -}}
 <span class="name">
 {{- end -}}
 
-{{- if .OP.HasName -}}{{- .OP.Name -}}{{- else -}}Anonymous{{- end -}}
-{{- if .OP.HasTrip -}}<span class="trip">{{.Trip | html}}</span>{{- end -}}
+{{if .HasName}}{{.Name}} {{else}}{{if (not .HasTrip)}}Anonymous {{end}}{{end -}}
+{{if .HasTrip}}<span class="trip">{{.Trip | html}}</span>{{end -}}
 
-{{- if .OP.HasEmail -}}
+{{- if .HasEmail -}}
 </a>
 {{- else -}}
 </span>
 {{- end -}}
 {{- end -}}
+{{end}}
 </td>
 <td>{{.Replies}}</td>
 <td>
 <a href="thread/{{.ID}}#{{.LastID}}">{{date .Bump}}</a> by
-{{if .OP.User -}}
-{{- /* dunno what scheme I should use for users */ -}}
-{{.OP.User.UserName | html}}
-{{else -}}
-{{- if .OP.HasEmail -}}
-<a class="email" href="mailto:{{.OP.Email | urlquery}}">
+{{with .Last}}
+{{- if .User -}}
+{{.User.UserName | html}}
+{{- else -}}
+{{- if .HasEmail -}}
+<a class="email" href="mailto:{{.Email | urlquery}}">
 {{- else -}}
 <span class="name">
 {{- end -}}
 
-{{- if .OP.HasName -}}{{- .OP.Name -}}{{- else -}}Anonymous{{- end -}}
-{{- if .OP.HasTrip -}}<span class="trip">{{.Trip | html}}</span>{{- end -}}
+{{if .HasName}}{{.Name}} {{else}}{{if (not .HasTrip)}}Anonymous {{end}}{{end -}}
+{{if .HasTrip}}<span class="trip">{{.Trip | html}}</span>{{end -}}
 
-{{- if .OP.HasEmail -}}
+{{- if .HasEmail -}}
 </a>
 {{- else -}}
 </span>
 {{- end -}}
 {{- end -}}
+{{end}}
 </td>
 </tr>
 {{end -}}

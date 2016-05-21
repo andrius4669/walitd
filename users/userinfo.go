@@ -23,3 +23,7 @@ type UserInfo struct {
 	PictureCreateDate time.Time
 	UserId		int
 }
+
+func GetUserInfo(id uint32) (UserInfo *) {
+	return nil // TODO
+}

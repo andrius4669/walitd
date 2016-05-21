@@ -76,13 +76,14 @@ type threadContent struct {
 }
 
 type threadInfo struct {
-	ID      uint32
-	Title   string
-	OP      userIdent
-	Replies uint32
-	Last    userIdent
-	LastID  uint32
-	Bump    time.Time
+	ID       uint32
+	Title    string
+	OP       userIdent
+	Replies  uint32
+	Last     userIdent
+	LastID   uint32
+	LastDate time.Time
+	Bump     time.Time
 }
 
 type boardPage struct {

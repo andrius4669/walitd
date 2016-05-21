@@ -60,8 +60,9 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 	p.Title = "lol this is title"
 	p.Message = "lol this is message"
 	p.FMessage = "lol this is message"
-	p.References = append(p.References, 124)
-	p.References = append(p.References, 125)
+	for i := 0; i < 30; i++ {
+		p.References = append(p.References, 124 + uint32(i))
+	}
 	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
 	page.Thread.OP = p
 	p.PostID = 124
@@ -72,6 +73,7 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 	p.Files = nil
 	page.Thread.Replies = append(page.Thread.Replies, p)
 	p.PostID = 125
+	p.UserIdent.Name = "weep"
 	p.UserIdent.Email = "sage"
 	p.References = nil
 	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
@@ -79,6 +81,7 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
 	page.Thread.Replies = append(page.Thread.Replies, p)
 	p.PostID = 126
+	p.Title = ""
 	p.UserIdent.Name = ""
 	page.Thread.Replies = append(page.Thread.Replies, p)
 	p.PostID = 127

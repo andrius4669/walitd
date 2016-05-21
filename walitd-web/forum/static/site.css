@@ -3,10 +3,11 @@ body, table {
 	font-size: 13px;
 }
 
-table.posts {
+.posts {
 	border: 0px none black;
 	padding: 0px 0px 0px 0px;
 	margin: 0px 0px 0px 0px;
+	width: 100%;
 }
 
 td.postuser, td.postbody {
@@ -67,17 +68,21 @@ td.postbody {
 
 .postheader {
 	background-color: #88EE88;
-	font-weight: bold;
-	color: black;
 }
 
 .postinfo {
 	float: right;
-	color: black;
+	padding-right: 2px;
 }
 
-.attachments {
-	background-color: #CCFFCC;
+.posttitle {
+	font-weight: bold;
+}
+
+.postcontainer {
+	padding-bottom: 4px;
+	padding-right: 2px;
+	padding-left: 2px;
 }
 
 .replies {
@@ -87,8 +92,14 @@ td.postbody {
 
 .fcontainer {
 	float: left;
-	margin-left: 4px;
-	margin-right: 4px;
-	margin-top: 2px;
-	margin-bottom: 4px;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.message {
+	padding-left: 2px;
+	padding-right: 2px;
+	padding-top: 2px;
 }

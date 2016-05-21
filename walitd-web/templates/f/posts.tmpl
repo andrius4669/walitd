@@ -12,7 +12,7 @@
 &gt; <a href="./{{.Thread.ID}}">#{{.Thread.ID}}</a>
 </div>
 
-<table class="posts" style="width: 100%;">
+<table class="posts">
 
 {{with .Thread.OP}}
 
@@ -45,11 +45,12 @@
 <td class="postbody">
 
 <div class="postheader" id="{{.PostID}}">
-{{.Title | html}}
+<span class="posttitle">{{.Title | html}}</span>
 <div class="postinfo">
 <b>{{date .Date}}</b>
-<a href="#{{.PostID}}">#</a>{{.PostID}}&nbsp;
+<a href="#{{.PostID}}">#</a>{{.PostID}}
 </div>
+<div style="clear: both;"></div>
 </div>
 
 {{if (gt (len .References) 0) -}}
@@ -59,9 +60,8 @@
 {{end -}}
 </div>
 {{end -}}
-
+<div class="postcontainer">
 {{if (gt (len .Files) 0) -}}
-<div class="attachments">
 {{range .Files -}}
 <div class="fcontainer">
 <p style="margin-bottom:0; margin-top: 0">
@@ -76,12 +76,14 @@
 {{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.Thumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
 </div>
 {{end -}}
-<div style="clear: both;"></div>
-</div>
+{{if (gt (len .Files) 1)}}<div style="clear: both;"></div>{{end}}
+{{if (eq (len .Files) 1)}}<br />{{end}}
 {{end -}}
-
+<div class="message">
 {{.FMessage}}
-
+</div>
+{{if (le (len .Files) 1)}}<div style="clear: both;"></div>{{end}}
+</div>
 </td>
 </tr>
 
@@ -118,11 +120,12 @@
 <td class="postbody" style="position: relative;">
 
 <div class="postheader" id="{{.PostID}}">
-{{.Title | html}}
+<span class="posttitle">{{.Title | html}}</span>
 <div class="postinfo">
 <b>{{date .Date}}</b>
-<a href="#{{.PostID}}">#</a>{{.PostID}}&nbsp;
+<a href="#{{.PostID}}">#</a>{{.PostID}}
 </div>
+<div style="clear: both;"></div>
 </div>
 
 {{if (gt (len .References) 0) -}}
@@ -133,8 +136,8 @@
 </div>
 {{end -}}
 
+<div class="postcontainer">
 {{if (gt (len .Files) 0) -}}
-<div class="attachments">
 {{range .Files -}}
 <div class="fcontainer">
 <p style="margin-bottom:0; margin-top: 0">
@@ -149,12 +152,13 @@
 {{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.Thumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
 </div>
 {{end -}}
-<div style="clear: both;"></div>
-</div>
+{{if (gt (len .Files) 1)}}<div style="clear: both;"></div>{{end}}
 {{end -}}
-
+<div class="message">
 {{.FMessage}}
-
+</div>
+{{if (lt (len .Files) 1)}}<div style="clear: both;"></div>{{end}}
+</div>
 </td>
 </tr>
 
