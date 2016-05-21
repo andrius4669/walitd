@@ -86,6 +86,8 @@ func main() {
 	}
 	// load templates which modules may use
 	forum.LoadTemplates()
+	news.LoadTemplates()
+	users.LoadTemplates()
 	// k..
 	http.ListenAndServe(cfg.GetListenHost(), &handlerType{})
 	// TODO(andrius) error handling

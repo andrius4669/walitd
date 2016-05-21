@@ -12,7 +12,7 @@ import (
 )
 
 func queryBoardList(db *sql.DB, p *frontPage) {
-	rows, err := db.Query("SELECT board, topic, description FROM boards")
+	rows, err := db.Query("SELECT bname, topic, description FROM boards")
 	panicErr(err)
 
 	for rows.Next() {
@@ -44,11 +44,13 @@ type boardPage struct {
 */
 func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) bool {
 	var attributesjson []byte
-	err := db.QueryRow("SELECT board, topic, description, attributes FROM boards WHERE board=$1", board).Scan(&p.Board, &p.Topic, &p.Description, &attributesjson)
+	var bid uint32
+	err := db.QueryRow("SELECT boardid, topic, description, attributes FROM boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
 	if err == sql.ErrNoRows {
 		return false
 	}
 	panicErr(err)
+    p.Board = board
 
 	type attributes struct {
 		PageLimit *uint32
@@ -118,7 +120,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 			p.Threads[i].OP.User = users.GetUserInfo(uint32(uid.Int64))
 		}
 		// get info on last post
-		//err = db.QueryRow("SELECT postid, user, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", board, p.Threads[i].ID).Scan(&p.Threads[i].
+		err = db.QueryRow("SELECT postid, user, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", board, p.Threads[i].ID).Scan(&p.Threads[i].
 	}
 	return false
 /*
