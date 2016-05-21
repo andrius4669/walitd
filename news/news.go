@@ -28,7 +28,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
 			return
 		}
-		if rpath[:i] == "news" {
+		if rpath[:i] == "articles" {
 			if rpath[i+1:] == "" {
 				// Display list of news
 				renderArticlesList(w, r)
@@ -38,7 +38,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			}
 			return
 		}
-		if rpath[:i] == "static" {
+		/*if rpath[:i] == "static" {
 			if rpath[i+1:] != "" {
 				serveStatic(w, r, rpath[i+1:])
 			} else {
@@ -47,21 +47,23 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			}
 			return
 		}
-		board := rpath[:i]
+		*/
+		/*board := rpath[:i]
 		rpath = rpath[i+1:]
 		mod := false
-		/* if rpath == "mod" {
+		    if rpath == "mod" {
 			// append /
 			http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
 			return
 		} */
-		if len(rpath) >= 4 && rpath[:4] == "mod/" {
+		/* if len(rpath) >= 4 && rpath[:4] == "mod/" {
 			mod = true
 			rpath = rpath[4:]
 		}
+		*/
 		if rpath == "" {
 			// render first page
-			renderBoardPage(w, r, board, 1, mod)
+			//renderBoardPage(w, r, board, 1, mod)
 			return
 		}
 		i = str.IndexByte(rpath, '/')
@@ -69,15 +71,15 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			n, err := strconv.ParseUint(rpath, 10, 32)
 			if err == nil {
 				// render nth page
-				renderBoardPage(w, r, board, uint32(n), mod)
+	//			renderBoardPage(w, r, board, uint32(n), mod)
 			} else {
 				// append /
 				http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
 			}
 			return
 		}
-		group := rpath[:i]
-		rpath = rpath[i+1:]
+		//group := rpath[:i]
+		//rpath = rpath[i+1:]
 
 		if rpath == "" {
 			// be lazy there :^)
@@ -95,12 +97,14 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			return
 		} */
 
+		/*
 		if i = str.IndexByte(rpath, '/'); i != -1 {
 			// ignore anything including and past /
 			rpath = rpath[:i]
 		}
+		*/
 
-		if group == "thread" {
+		/*if group == "thread" {
 			// render specific thread
 			renderThread(w, r, board, rpath, mod)
 			return
@@ -108,7 +112,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			// serve source file
 			serveSrc(w, r, board, rpath)
 			return
-		}
+		}*/
 		http.NotFound(w, r)
 		return
 	} else if r.Method == "POST" {
