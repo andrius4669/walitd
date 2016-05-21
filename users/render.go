@@ -1,5 +1,11 @@
 package users
 
+import (
+//	cfg "../configmgr"
+//	"../files"
+	"net/http"
+//"path"
+)
 
 func renderLoginPage(w http.ResponseWriter, r *http.Request)  {
 	http.Error(w, "Login page not implemented", 501);
