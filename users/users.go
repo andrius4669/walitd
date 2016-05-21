@@ -18,15 +18,15 @@ func LoadTemplates() {
 	render.Load("profile", "users/profile.tmpl")
 	render.Load("register", "users/register.tmpl")
 }
-// users/createfriendlist
-// users/creategroup
-// users/friendlist
-// users/group/*
-// users/groups
-// users/login
-// users/messages
-// users/profile/*
-// users/register
+// users/createfriendlist GET/POST
+// users/creategroup GET/POST
+// users/friendlist GET/POST
+// users/group/* GET/POST
+// users/groups GET
+// users/login POST
+// users/messages GET/POST
+// users/profile/* GET/POST
+// users/register GET/POST
 
 //main page: users/groups if not loged in users/login
 // * some number

@@ -21,28 +21,13 @@ func queryBoardList(db *sql.DB, p *frontPage) {
 		p.Boards = append(p.Boards, b)
 	}
 }
-/*
-type threadInfo struct {
-	ID       uint32
-	Title    string
-	OP       userIdent
-	Replies  uint32
-	Last     userIdent
-	LastID   uint32
-	LastTime time.Time
-	Bump     time.Time
-}
 
-type boardPage struct {
-	boardInfo
-	// add extra info to board page
-	Threads     []threadInfo
-	Pages       []bool // used or not
-	CurrentPage uint32
-	Mod         bool // whether viewing in moderator mode or not
-}
-*/
 func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) bool {
+	// sanity checks first
+	if !validBoardName(board) {
+		return false
+	}
+
 	var attributesjson []byte
 	var bid uint32
 	err := db.QueryRow("SELECT boardid, topic, description, attributes FROM boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
@@ -113,60 +98,21 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	for i := range p.Threads {
 		// get stuff from OP
 		var uid sql.NullInt64
-		err = db.QueryRow("SELECT title, user, pname, trip, email FROM posts WHERE boardid=$1 AND postid=$2", bid, p.Threads[i].ID).Scan(&p.Threads[i].Title, &uid, &p.Threads[i].OP.Name, &p.Threads[i].OP.Trip, &p.Threads[i].OP.Email)
+		err = db.QueryRow("SELECT title, userid, pname, trip, email FROM posts WHERE boardid=$1 AND postid=$2", bid, p.Threads[i].ID).Scan(&p.Threads[i].Title, &uid, &p.Threads[i].OP.Name, &p.Threads[i].OP.Trip, &p.Threads[i].OP.Email)
 		panicErr(err)
 		if uid.Valid {
 			p.Threads[i].OP.User = users.GetUserInfo(uint32(uid.Int64))
 		}
 		// get info on last post
-		err = db.QueryRow("SELECT postid, user, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", bid, p.Threads[i].ID).Scan(&p.Threads[i].LastID, &uid, &p.Threads[i].Last.Name, &p.Threads[i].Last.Trip, &p.Threads[i].Last.Email, &p.Threads[i].LastDate)
+		err = db.QueryRow("SELECT postid, userid, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", bid, p.Threads[i].ID).Scan(&p.Threads[i].LastID, &uid, &p.Threads[i].Last.Name, &p.Threads[i].Last.Trip, &p.Threads[i].Last.Email, &p.Threads[i].LastDate)
 		panicErr(err)
 		if uid.Valid {
 			p.Threads[i].Last.User = users.GetUserInfo(uint32(uid.Int64))
 		}
 	}
 
-
-
-	return false
-/*
-	for i := range b.Threads {
-		{
-			var op fullPostInfo
-			op.parent = &b.Threads[i].threadInfo
-			op.fparent = &b.Threads[i]
-			// expliclty fetch OP
-			err = db.QueryRow(fmt.Sprintf("SELECT id, name, trip, subject, email, date, message, file, original, thumb FROM %s.posts WHERE id=$1", board), b.Threads[i].Id).
-				Scan(&op.Id, &op.Name, &op.Trip, &op.Subject, &op.Email, &op.Date, &op.Message, &op.File, &op.Original, &op.Thumb)
-			if err == sql.ErrNoRows {
-				// thread without OP, it broke. TODO: remove from list
-			} else {
-				panicErr(err)
-			}
-			b.Threads[i].Op = op
-			b.Threads[i].postMap[op.Id] = 0
-		}
-
-		// TODO sorting and limiting (we need to show only few posts in board view)
-		rows, err = db.Query(fmt.Sprintf("SELECT id, name, trip, subject, email, date, message, file, original, thumb FROM %s.posts WHERE thread=$1", board), b.Threads[i].Id)
-		panicErr(err)
-		for rows.Next() {
-			var p fullPostInfo
-			p.parent = &b.Threads[i].threadInfo
-			p.fparent = &b.Threads[i]
-			err = rows.Scan(&p.Id, &p.Name, &p.Trip, &p.Subject, &p.Email, &p.Date, &p.Message, &p.File, &p.Original, &p.Thumb)
-			panicErr(err)
-			if p.Id == b.Threads[i].Id {
-				continue // OP already included -- shouldn't normally happen
-			}
-			b.Threads[i].Replies = append(b.Threads[i].Replies, p)
-			b.Threads[i].postMap[p.Id] = len(b.Threads[i].Replies)
-		}
-	}
-	*/
+	return true
 }
-
-//func queryMain
 
 func queryThread(db *sql.DB, board, thread string) bool {
 	// sanity checks first
