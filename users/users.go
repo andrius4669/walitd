@@ -1,7 +1,11 @@
 package users
 
 import (
+//"fmt"
+	"../render"
 	"net/http"
+	"strconv"
+	str "strings"
 )
 
 func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
