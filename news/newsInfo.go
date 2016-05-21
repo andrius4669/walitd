@@ -8,12 +8,12 @@ import "time"
 
 type UserInfo struct {
 	Text         string
-	Score        Float32    
-	CreationDate time.time    
-	VisitCount   Int 
+	Score        float32
+	CreationDate time.Time
+	VisitCount   int
 	Comment      string  
 	Category     string
-	LastModificationDate time.time
+	LastModificationDate time.Time
 	LastModificationAdmin string
 	ThreadId     int
 	}

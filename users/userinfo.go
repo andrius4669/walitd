@@ -13,13 +13,13 @@ type UserInfo struct {
 	Role           string    // string representation of user's privilege. additional functions may exist which can interept this
 	Name		string
 	Surname		string
-	BirthDate	time.time
+	BirthDate	time.Time
 	BirthTown	string
 	BirthCountry	string
 	Phone		string
 	Gender		int
 	Discription	string
-	EditDate	time.time
-	PictureCreateDate time.time
+	EditDate	time.Time
+	PictureCreateDate time.Time
 	UserId		int
 }
