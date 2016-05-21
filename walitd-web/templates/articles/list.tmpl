@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>Forum front page</title>
+<link rel="stylesheet" type="text/css" href="/forum/static/site.css" />
+</head>
+<body>
+<div class="navigation"><a href="/forum/">Articles</a></div>
+<img src="/forum/static/front.png" alt="WALITD" />
+<table class="boardlist">
+<tr>
+<th>Author</th>
+<th>Category</th>
+<th>Description</th>
+<th>FullArticleLink</th>
+</tr>
+{{range .Boards -}}
+<tr>
+<td><a href="{{.Author}}/">{{.Author}}</a></td>
+<td>{{.Category | html}}</td>
+<td>{{.Description | html}}</td>
+</tr>
+{{end -}}
+</table>
+</body>
+</html>
