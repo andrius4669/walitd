@@ -114,23 +114,40 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	return true
 }
 
-func queryThread(db *sql.DB, board, thread string) bool {
+func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool {
 	// sanity checks first
 	if !validBoardName(board) {
 		return false
 	}
 
-	//var tid uint32
+	var tid uint32
 	var err error
 	// no casting for multiple return values. no nested funcs too. fuck you golang.
 	// I hope this shit will atleast get inlined.
 	intcst := func(i uint64, e error) (uint32, error) {
 		return uint32(i), e
 	}
-	_, err = intcst(strconv.ParseUint(thread, 10, 32))
+	tid, err = intcst(strconv.ParseUint(thread, 10, 32))
 	if err != nil {
 		return false
 	}
+
+	var attributesjson []byte
+	var bid uint32
+	err = db.QueryRow("SELECT boardid, topic, description, attributes FROM boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
+	if err == sql.ErrNoRows {
+		return false
+	}
+	panicErr(err)
+	p.Board = board
+
+	err = db.QueryRow("SELECT threadid FROM threads WHERE boardid=$1 AND threadid=$2", bid, tid).Scan(&tid)
+	if err == sql.ErrNoRows {
+		return false
+	}
+	panicErr(err)
+
+
 
 	// TODO(andrius)
 	return false

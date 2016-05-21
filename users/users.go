@@ -1,9 +1,9 @@
 package users
 
 import (
-//	"fmt"
+	"fmt"
 	"../render"
-//	"net/http"
+	"net/http"
 //	"strconv"
 	//str "strings"
 )
@@ -30,3 +30,7 @@ func LoadTemplates() {
 
 //main page: users/groups if not loged in users/login
 // * some number
+
+func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
+	http.Error(w, fmt.Sprintf("501 not handlied: %s", r.URL.Path[pathi+1:]), 501)
+}
