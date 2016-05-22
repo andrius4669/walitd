@@ -1,9 +1,43 @@
-<html>
-<head>
-<title>Register page</title>
-<link rel="stylesheet" type="text/css" href="/users/static/site.css" />
-</head>
-<body>
 
-</body>
-</html>
+ <br>
+    <table class="form">
+        <tr><td>
+            <form action="" method="post">
+                <p>First Name <br>
+                    <input name="firstname" type="text" value="{{.FirstName}}">
+                    {{.FirstNameErr}}
+                </p>
+                <p>Last Name <br>
+                    <input name="lastname" type="text" value="{{.SecondName}}">
+                    {{.SecondNameErr}}
+                </p>
+                <p>Username <br>
+                    <input name="username" type="text" value="{{.Username}}">
+                    {{.UsernameErr}}
+                </p>
+                <p>Password<br>
+                    <input name="pass" type="password">
+                    {{.PassErr}}
+                </p>
+                <p>email<br>
+                    <input name="email" type="text" value="{{.Email}}">
+                    {{.EmailErr}}
+                </p>
+                <p>Birth Town <br>
+                    <input name="town" type="text" value="{{.City}}">
+                </p>
+                <p>Birth country<br>
+                    <input name="country" type="text" value="{{.Country}}">
+                </p>
+                <p>Gender<br>
+                        <select name="gender">
+                            <option value="0" {{if .IsMale -}}Selected{{end -}}> Male</option>
+                            <option value="1" {{if .IsFemale -}}Selected{{end -}}> Women</option>
+                            <option value="2" {{if .IsDunno -}}Selected{{end -}}> Uncertain</option>
+                        </select>
+                </p>
+                <input type="submit" value="Register">
+            </form>
+        </td></tr>
+
+
