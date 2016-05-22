@@ -10,7 +10,7 @@ import (
 )
 
 func LoadTemplates() {
-	render.Load("createriendlist", "users/createFriendList.tmpl");
+	render.Load("createriendlist", "users/createFriendListLLL.tmpl");
 	render.Load("creategroup", "users/creategroup.tmpl");
 	render.Load("friendlist", "users/friendlist.tmpl");
 	render.Load("group", "users/group.tmpl");
