@@ -1,9 +1,12 @@
-<html>
-<head>
-<title>Messages page</title>
-<link rel="stylesheet" type="text/css" href="/users/static/site.css" />
-</head>
-<body>
-
-</body>
-</html>
+<h2> Sent messages</h2>
+<table>
+    <tr><td>Reciever</td><td>Message</td></tr>
+    {{range .Sent -}} <tr><td>{{.Reciever}}</td><td>{{.Text}}</td></tr>{{- end}}
+</table>
+<br>
+<h2>Recieved messages</h2>
+<table>
+    <tr><td>Sender</td><td>Message</td></tr>
+    {{range .Sent -}} <tr><td>{{.Sender}}</td><td>{{.Text}}</td></tr>{{- end}}
+</table>
+<br>

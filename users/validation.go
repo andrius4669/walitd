@@ -31,7 +31,7 @@ func validateRegisterForm(form *userForm) *userForm  {
 		form.p();
 		form.EmailErr = makeErrorMessage("Bad email");
 	}
-
+	//TODO check if username is available
 	return form;
 }
 func validateLoginForm(form *loginInfo) *loginInfo  {

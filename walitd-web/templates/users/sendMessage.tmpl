@@ -1,0 +1,11 @@
+<h2>Do want to send a message??</h2>
+<form action="" method="POST">
+    <table>
+        <tr><td>To:</td><td> <input type="text" name="reciever" value="{{.Sender}}"></td></tr>
+        {{.SenderErr}}
+        <tr><td>Message</td><td> <input type="text" name="message" value="{{.Message}}"></td></tr>
+        <tr><td></td><td><input type="submit" value="Send"></td></tr>
+    </table>
+    {{.SenderErr}}
+    {{ if  (eq .SenderErr "---")}} <p class="error">Message successfully sent</p> {{end}}
+</form>

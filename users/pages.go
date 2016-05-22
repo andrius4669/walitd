@@ -48,9 +48,12 @@ type sharedNews struct{
 	Sharedid int;
 	Userid int;
 	Newsid int;
+	Title string;
+	UserName string;
 	Groupname string;
 	Desc string;
 	Created time.Time;
+	Link string;
 }
 
 
@@ -99,6 +102,10 @@ type message struct {
 	Text string;
 	Created time.Time;
 }
+type messages struct {
+	Recieved []message;
+	Sent []message;
+}
 
 
 type userForm struct {
@@ -146,7 +153,6 @@ func (m userForm) IsDunno() bool {
 	}
 	return false;
 }
-
 type pageInfo struct{
 	Name string;
 	Header string;
@@ -159,6 +165,7 @@ type loginInfo struct{
 }
 
 func getUser(id int) *user  {
+	//TODO get dynamic info
 	obj := new(user);
 	obj.Userid = 1;
 	obj.Email = "mail@mail.com";
@@ -172,5 +179,76 @@ func getUser(id int) *user  {
 	obj.GenderN = "LL";
 	obj.Description = "desc";
 	obj.Picture = "adresas";
+	return obj;
+}
+
+type messageForm struct {
+	Sender string;
+	SenderErr string;
+	To string;
+	Message string;
+}
+type userAddForm struct {
+	Username string;
+	UsernameErr string;
+}
+func getGroupsPage() *groupsPage{
+	//TODO: return groups page info
+	return new(groupsPage);
+}
+func getMessagePage() *messages{
+	//TODO: return Messages
+	return new(messages);
+}
+func getFriendList() *friendListPage {
+	//TODO: return friend list
+	return new(friendListPage);
+}
+func getGroupPage(id int) *group{
+	//TODO: return group info
+	return new(group);
+}
+func joinToGroup(gr *userAddForm) *userAddForm{
+	//TODO: join group
+	return gr;
+}
+func leaveGroup(gr *userAddForm) *userAddForm {
+	//TODO: leave group
+	return gr;
+}
+func sendMessage(m *messageForm) *messageForm {
+	//TODO send message
+	return m;
+}
+func register(r *userForm) *userForm {
+	//TODO regist user
+	return r;
+
+}
+func createFriendListF()  {
+	//TODO create friend list
+}
+func createGroup(g *group) (*group, bool){
+	//TODO check username and create group
+	if (true){
+		return g, true;
+	} else{
+		return g, false;
+	}
+}
+func addFriend(o *userAddForm) *userAddForm{
+	//TODO add friend
+	return o;
+}
+func removeFriend(o *userAddForm) *userAddForm{
+	//TODO remove friend
+	return o;
+}
+func editProfile(obj *user) *user{
+	//TODO edit profile
+	return obj;
+}
+func editGroup(obj *group, id int) *group{
+	//TODO edit group logic
 	return obj;
 }

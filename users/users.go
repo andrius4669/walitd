@@ -10,10 +10,11 @@ import (
 )
 
 func LoadTemplates() {
-	render.Load("createfriendlist", "users/createfriendlist.tmpl");
+	render.Load("createriendlist", "users/createFriendList.tmpl");
 	render.Load("creategroup", "users/creategroup.tmpl");
 	render.Load("friendlist", "users/friendlist.tmpl");
 	render.Load("group", "users/group.tmpl");
+	render.Load("groups", "users/groups.tmpl");
 	render.Load("groupEdit", "users/groupEdit.tmpl");
 	render.Load("login", "users/login.tmpl");
 	render.Load("messages", "users/messages.tmpl");
@@ -22,6 +23,9 @@ func LoadTemplates() {
 	render.Load("register", "users/register.tmpl");
 	render.Load("header", "users/header.tmpl");
 	render.Load("footer", "users/footer.tmpl");
+	render.Load("removefriend", "users/removeFriend.tmpl");
+	render.Load("sendmessage", "users/sendMessage.tmpl");
+	render.Load("sharedNews", "users/sharedNews.tmpl");
 }
 // users/createfriendlist GET/POST
 // users/creategroup GET/POST
@@ -46,7 +50,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 	if r.Method == "GET" || r.Method == "HEAD" {
 		if (true){ //TODO: if not logged redirect to login page
 			if rpath == "" {
-				renderGroupsPage(w, r)
+				groups := getGroupsPage()
+				arr := new(userAddForm) //it will be empty, in this case
+				renderGroupsPage(w, r, groups, arr)
 				return
 			}
 			i := str.IndexByte(rpath, '/')
@@ -56,7 +62,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				return
 			}
 			if rpath[:i] == "messages" {
-				renderMessagesPage(w, r);
+				renderMessagesPage(w, r, getMessagePage(), new(messageForm));
 				return
 			}
 			if rpath[:i] == "createfriendlist" {
@@ -69,11 +75,13 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				return
 			}
 			if rpath[:i] == "groups" {
-				renderGroupsPage(w, r);
+				groups := getGroupsPage();
+				arr := new(userAddForm) //it will be empty, in this case
+				renderGroupsPage(w, r, groups, arr)
 				return
 			}
 			if rpath[:i] == "friendList" {
-				renderFriendListPage(w, r);
+				renderFriendListPage(w, r, new(userAddForm), getFriendList());
 				return
 			}
 			if rpath[:i] == "profile" {
@@ -108,9 +116,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 						return;
 					}
 					if (true){
-						renderGroupPage(w, r, id);
+						renderGroupPage(w, r, getGroupPage(id));
 					} else{
-						renderGroupEditPage(w, r, id);
+						renderGroupEditPage(w, r, getGroupPage(id));
 					}
 
 				} else {
@@ -151,7 +159,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			if rpath[:i] == "login" {
 				if rpath[i+1:] == "" {
 					obj := new(loginInfo);
-					renderLoginPage(w, r,obj);
+					renderLoginPage(w, r, obj);
 				}
 				return
 			}
@@ -164,10 +172,18 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		r.ParseForm()
 		form := r.Form;
 		i := str.IndexByte(rpath, '/')
-		if (true && (rpath[:i] == "login" || rpath[:i] == "register")){ //TODO: if not logged redirect to login page if not post form login or register
+		if (true || (rpath[:i] == "login" || rpath[:i] == "register")){ //TODO: if not logged redirect to login page if not post form login or register
 			if rpath == "" {
-				//TODO: handle post request
-				renderGroupsPage(w, r)
+				obj := new(userAddForm);
+
+				obj.Username = form["group"][0]
+				act := form["act"][0];
+				if (act == "join"){
+					obj = joinToGroup(obj);
+				} else{
+					obj = leaveGroup(obj);
+				}
+				renderGroupsPage(w, r, getGroupsPage(), obj)
 				return
 			}
 			if i == -1 {
@@ -176,19 +192,23 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				return
 			}
 			if rpath[:i] == "messages" {
-				//TODO: handle post request
-				renderMessagesPage(w, r);
+				obj := new(messageForm)
+				obj.To = form["reciever"][0];
+				obj.Message = form["message"][0];
+				obj = sendMessage(obj);
+				renderMessagesPage(w, r, getMessagePage(), obj);
 				return
 			}
 			if rpath[:i] == "login" {
-				//TODO: handle post request.
 				f := new(loginInfo);
 				f.Username = form["username"][0];
 				f.Pass = form["pass"][0];
 				f.ErrorSet = false;
 				obj := validateLoginForm(f);
+
 				if (obj.ErrorSet){
 					renderLoginPage(w, r, f);
+					return;
 				} else{
 					http.Redirect( w, r , "/users/groups", http.StatusFound);
 				}
@@ -207,32 +227,56 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					arr.City = form["town"][0];
 					obj := validateRegisterForm(arr);
 					if (obj.ErrorCnt > 0 || true){ //TODO: check why error counter doesnt work
-						//TODO: save form to database
 						renderRegisterPage(w, r, obj);
 					} else {
+						register(obj);
 						http.Redirect( w, r , "/users/login", http.StatusFound);
 					}
 					return
 			}
 			if rpath[:i] == "createfriendlist" {
-				//TODO: handle post request
+				createFriendListF();
 				renderCreateFriendListPage(w, r);
 				return
 			}
 			if rpath[:i] == "creategroup" {
-				//TODO: handle post request
 				obj := new(group);
-				renderCreateGroupPage(w, r, obj);
-				return
+				obj.Name = form["name"][0];
+				obj.Description = form["desc"][0];
+				var a bool;
+				obj, a = createGroup(obj);
+				if a{
+					http.Redirect( w, r , "/users/groups/", http.StatusFound);
+					return
+				} else{
+					renderCreateGroupPage(w, r, obj);
+					return;
+				}
+
 			}
 			if rpath[:i] == "groups" {
-				//TODO: handle post request
-				renderGroupsPage(w, r);
+				obj := new(userAddForm);
+//				fmt.Printf("%v \n", form);
+				obj.Username = form["group"][0];
+				act := form["act"][0];
+				if (act == "join"){
+					joinToGroup(obj);
+				} else{
+					leaveGroup(obj);
+				}
+				renderGroupsPage(w, r, getGroupsPage(), obj)
 				return
 			}
 			if rpath[:i] == "friendList" {
-				//TODO: handle post request
-				renderFriendListPage(w, r);
+				obj := new(userAddForm)
+				obj.Username = form["user"][0];
+				act := form["act"][0];
+				if (act == "addFriend"){
+					obj = 	addFriend(obj);
+				} else{
+					obj = 	removeFriend(obj);
+				}
+				renderFriendListPage(w, r, obj, getFriendList());
 				return
 			}
 			if rpath[:i] == "profile" {
@@ -243,7 +287,6 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 						http.Redirect( w, r , "/users/", http.StatusFound);
 						return;
 					}
-					//TODO: handle post request
 					arr := getUser(id);
 					arr.Email =form["email"][0];
 					arr.FirstName =form["firstname"][0];
@@ -251,10 +294,14 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					arr.Country =form["country"][0];
 					arr.Telephone =form["telephone"][0];
 					arr.City =form["city"][0];
+					//TODO somehow handle birthday
 //					arr.Birthday =time.Now().Format(form["birth"][0]);
 					arr.Picture =form["pic"][0];
 					arr.Description =form["desc"][0];
+					arr = validateProfileForm(arr);
+					arr = editProfile(arr);
 					renderEditProfilePage(w, r, arr);
+					return;
 				} else {
 					http.Redirect( w, r , "/users/", http.StatusFound);
 				}
@@ -268,8 +315,10 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 						http.Redirect( w, r , "/users/", http.StatusFound);
 						return;
 					}
-					//TODO: handle post request
-					renderGroupPage(w, r, id);
+					obj := new(group);
+					obj.Description = form["desc"][0];
+					obj = editGroup(obj, id);
+					renderGroupPage(w, r, obj);
 				} else {
 					http.Redirect( w, r , "/users/", http.StatusFound);
 				}
@@ -293,16 +342,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			http.NotFound(w, r)
 			return
 		} else{
-			i := str.IndexByte(rpath, '/')
-			if rpath[:i] == "register" {
-				if rpath[i+1:] == "" {
-					renderRegisterPage(w, r, new(userForm))
-				}
-				return
-			}
-			// else render login page
-			obj := new(loginInfo);
-			renderLoginPage(w, r, obj);
+			http.Redirect( w, r , "/users/", http.StatusFound);
+			return;
 		}
 		http.Error(w, "501 POST routines not yet implemented", 501)
 	} else {
