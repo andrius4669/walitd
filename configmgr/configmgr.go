@@ -26,6 +26,11 @@ func init() {
 	config["forum.thumbdir"] = "thumb"
 	config["forum.staticdir"] = "static"
 	config["forum.boardstaticdir"] = "static"
+	config["sql.host"] = "localhost"
+	config["sql.port"] = "5432"
+	config["sql.user"] = "walitd"
+	config["sql.password"] = "test"
+	config["sql.dbname"] = "walitd"
 	// more default options to be added there
 	configInitialized = true
 }
