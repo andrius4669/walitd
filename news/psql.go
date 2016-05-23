@@ -12,7 +12,7 @@ import (
 //	err := db.QueryRow("SELECT * FROM article where article_id=$1;", id).Scan(&u.Userid, &u.Username, &u.Email, &u.FirstName, &u.SecondName, &u.Role, &u.Birthday, &u.City, &u.Country, &u.Telephone, &u.Gender, &u.Description, &u.Created, &u.Updated, &u.Picture, &u.PictureCreated);
 //	panicErr(err);
 //}
-
+//ArticleList
 func queryArticlesList(db *sql.DB, p *ArticlesFrontPage) {
 	rows, err := db.Query("SELECT article, score, visit_count, description, category, author, upload_date FROM article")
 	panicErr(err)
