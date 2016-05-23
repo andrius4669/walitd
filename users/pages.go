@@ -229,8 +229,12 @@ func createFriendListF()  {
 	//TODO create friend list
 }
 func createGroup(g *group) ( bool){
-	//TODO check username and create group
-	if (true){
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	gg := new(group);
+	ee := queryGetGroupByName(db, gg, g.Name);
+	if (ee != nil){
+		queryCreateGroup(db, g, 1);// todo set dynamic owner
 		return true;
 	} else{
 		return false;

@@ -110,21 +110,27 @@ func queryGetMessages(db *sql.DB, m *messages, id int){
 func queryGetGroup(db *sql.DB, g *group, id int) error{
 	var desc sql.NullString;
 	g.GroupId = id;
-	err := db.QueryRow("Select name, description, created, updated from groups where groupid=$1 and grouptype=1;", id).Scan(&g.Name, &desc, &g.Created, &g.Updated);
+	err := db.QueryRow("Select groupid, name, description, created, updated from groups where groupid=$1 and grouptype=1;", id).Scan(&g.GroupId, &g.Name, &desc, &g.Created, &g.Updated);
 	if (desc.Valid){
 		g.Description = desc.String;
 	}
 	if err != nil {
-		panicErr(err)
 		return err;
 	}
 	pp := db.QueryRow("select users.userid, users.username from usergroup left join users on users.userid=usergroup.userid where level=1 and groupid=$1", id).Scan(&g.Owner, &g.OwnerName);
-	panicErr(err)
 	return pp;
 }
-func queryGetGroupByName(db *sql.DB, g *group, id string){
-	err := db.QueryRow("Select name, description, created, updated from groups where name=$1 and grouptype=1;", id).Scan(&g.Name, &g.Description, &g.Created, &g.Updated);
-	panicErr(err);
+func queryGetGroupByName(db *sql.DB, g *group, id string) error{
+	var desc sql.NullString;
+	err := db.QueryRow("Select groupid, name, description, created, updated from groups where name=$1 and grouptype=1;", id).Scan(&g.GroupId, &g.Name, &desc, &g.Created, &g.Updated);
+	if (desc.Valid){
+		g.Description = desc.String;
+	}
+	if err != nil {
+		return err;
+	}
+	pp := db.QueryRow("select users.userid, users.username from usergroup left join users on users.userid=usergroup.userid where level=1 and groupid=$1", id).Scan(&g.Owner, &g.OwnerName);
+	return pp;
 }
 func queryLogin(db *sql.DB, ul *loginInfo, u *user){
 	var id string;
@@ -134,9 +140,11 @@ func queryLogin(db *sql.DB, ul *loginInfo, u *user){
 		queryGetUser(db, u, id);
 	}
 }
-func queryCreateGroup(db *sql.DB, g *group)  {
-	_, err := db.Query("insert into groups (groupid, name, description, created, grouptype, updated) values (0, $1, $2, now(), 1, now())", g.Name, g.Description);
-	panicErr(err);
+func queryCreateGroup(db *sql.DB, g *group, ownerid int)  {
+	db.Query("insert into groups (name, description, created, grouptype, updated) values ($1, $2, now(), 1, now())", g.Name, g.Description);
+//	panicErr(err);
+	queryGetGroupByName(db, g, g.Name);
+	db.Query("insert into usergroup (groupid, userid, level, created) values($1, $2, 1, now())", g.GroupId, ownerid);
 }
 func queryAddToGroup(db *sql.DB, groupid int, level int, userid int){
 	_, err := db.Query("insert into usergroups (gruopid, userid, level, created) values($3, $1, $2, now())", userid, level, groupid);
