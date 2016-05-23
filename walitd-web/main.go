@@ -12,6 +12,7 @@ import (
 	"../news"
 	"../poll"
 	"../users"
+	"../admin"
 )
 
 var configFile = "config.ini"
@@ -38,6 +39,9 @@ func (handlerType) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		case "poll": // poll subsystem
 			poll.HandleRequest(w, r, i)
+			return
+		case "admin": // poll subsystem
+			admin.HandleRequest(w, r, i)
 			return
 		}
 	}
@@ -88,6 +92,7 @@ func main() {
 	forum.LoadTemplates()
 	news.LoadTemplates()
 	users.LoadTemplates()
+	admin.LoadTemplates()
 	// k..
 	http.ListenAndServe(cfg.GetListenHost(), &handlerType{})
 	// TODO(andrius) error handling

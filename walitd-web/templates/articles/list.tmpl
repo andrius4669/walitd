@@ -11,13 +11,14 @@
 <th>Author</th>
 <th>Category</th>
 <th>Description</th>
-<th>FullArticleLink</th>
+<th>Full Article</th>
 </tr>
 {{range .Boards -}}
 <tr>
 <td><a href="{{.Author}}/">{{.Author}}</a></td>
 <td>{{.Category | html}}</td>
 <td>{{.Description | html}}</td>
+<td><a href="articles/{{.FullArticleLink}}/">read more...</a></td>
 </tr>
 {{end -}}
 </table>

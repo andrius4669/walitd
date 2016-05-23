@@ -7,13 +7,32 @@ import (
 	//"time"
 )
 
-// TODO(andrius)
 //func Execute(w io.Writer, name string, data interface{})
 func renderArticlesList(w http.ResponseWriter, r *http.Request) {
 	page := new(ArticlesFrontPage)
 	page.Boards = append(page.Boards, articlesList{Author: "test", Category: "testinfo", Description: "test desc", FullArticleLink: "TESTY"})
-	page.Boards = append(page.Boards, articlesList{Author: "test2", Category: "testinfo2", Description: "test desc2", FullArticleLink: "TESTY"})
+	page.Boards = append(page.Boards, articlesList{Author: "test2", Category: "testinfo2", Description: "test desc2", FullArticleLink: "TESTY2"})
 	render.Execute(w, "list", page)
+}
+
+func renderArticles(w http.ResponseWriter, r *http.Request, id string) {
+	page := new(articlesContent)
+	page.UserIdent.UserName = "Algirdas-Lukas Narbutas"
+	//page.UserIdent.Date
+	//page.Date
+	page.Text = "<><"
+	page.Title = "YOU WILL NOT BELIEVE THESE 10 THINGS THAT SCHOCKED THE WESTERN IMERIALISM"
+	render.Execute(w, "article", page)
+}
+
+func renderArticleCreation(w http.ResponseWriter, r *http.Request){
+	page := new(articlesContent) //random struc
+	render.Execute(w, "createArticle", page)
+}
+
+func renderArticleSearch(w http.ResponseWriter, r *http.Request){
+	page := new(articlesContent) //random struc
+	render.Execute(w, "searchArticle", page)
 }
 
 /* func renderBoardList(w http.ResponseWriter, r *http.Request) {

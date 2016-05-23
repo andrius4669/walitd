@@ -1,9 +1,11 @@
 package news
 
 import (
+	"fmt"
 	"../render"
 	"net/http"
 	str "strings"
+	"strings"
 	//"strconv"
 )
 
@@ -13,15 +15,17 @@ func LoadTemplates() {
 	//render.Load("boardadmin", "f/boardadmin.tmpl") // allows to set settings for existing board
 	//render.Load("threads", "f/threads.tmpl") // shows whole board. for mods with extra options
 	//render.Load("posts", "f/posts.tmpl")     // shows all posts in thread
-	//render.Load("postedit", "f/postedit.tmpl")     // allows editing existing post
+	render.Load("article", "articles/article.tmpl")     // allows editing existing post
 	render.Load("list", "articles/list.tmpl")
+	render.Load("createArticle", "articles/createArticle.tmpl")
+	render.Load("searchArticle", "articles/searchArticle.tmpl")
 }
 
 func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 	rpath := r.URL.Path[pathi+1:]
 	if r.Method == "GET" || r.Method == "HEAD" {
 		if rpath == "" {
-			// display list of boards
+			// Display list of Articles
 			//renderBoardList(w, r)
 			renderArticlesList(w, r)
 			return
@@ -35,11 +39,21 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		if rpath[:i] == "articles" {
 			if rpath[i+1:] == "" {
 				// Display list of news
+				//renderArticles(w, r, rpath[i+1:])
 				renderArticlesList(w, r)
 			} else {
 				// display moderation page for specific board. possibly will check for admin
 				//renderArticles(w, r, rpath[i+1:])
+				renderArticles(w, r, rpath[i+1:])
 			}
+			return
+		}
+		if rpath[:i] == "createArticle" {
+			renderArticleCreation(w, r)
+			return
+		}
+		if rpath[:i] == "searchArticle" {
+			renderArticleSearch(w, r)
 			return
 		}
 		/*if rpath[:i] == "static" {
@@ -123,8 +137,51 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		http.NotFound(w, r)
 		return
 	} else if r.Method == "POST" {
-		// TODO(andrius) decide & implement posting
-		http.Error(w, "501 POST routines not yet implemented", 501)
+		r.ParseForm()
+		form := r.Form;
+		i := str.IndexByte(rpath, '/')
+		//fmt.Printf("%v \n", rpath[:i]);
+		//fmt.Printf("%v \n", i);
+
+		if rpath[:i] == "articles" {
+			vote := form["vote"][0];
+			fmt.Printf("%v \n", vote);
+			renderArticles(w, r, rpath[i+1:])
+			return
+		}
+		if rpath[:i] == "createArticle" {
+			name := form["name"][0];
+			description := form["description"][0];
+			article := form["article"][0];
+			tags := form["tags"][0];
+			noCaseTags := strings.ToLower(tags)
+			slices := strings.Split(noCaseTags, ",")
+			fmt.Printf("%v \n", name);
+			fmt.Printf("%v \n", description);
+			fmt.Printf("%v \n", article);
+			fmt.Printf("%v \n", tags);
+			fmt.Printf("%v \n", slices);
+			fmt.Printf("%v \n", slices[1]);
+
+			http.Redirect( w, r , "/news/", http.StatusFound);
+			return
+		}
+		if rpath[:i] == "searchArticle" {
+			name := form["name"][0];
+			author := form["author"][0];
+			tags := form["tags"][0];
+			noCaseTags := strings.ToLower(tags)
+			slices := strings.Split(noCaseTags, ",")
+			fmt.Printf("%v \n", name);
+			fmt.Printf("%v \n", author);
+			fmt.Printf("%v \n", tags);
+			fmt.Printf("%v \n", slices);
+			fmt.Printf("%v \n", slices[1]);
+
+			renderArticlesList(w, r)
+			return
+		}
+		//http.Error(w, "501 POST routines not yet implemented", 501)
 	} else {
 		http.Error(w, "501 method not implemented", 501)
 	}

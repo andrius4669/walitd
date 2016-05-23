@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>Forum front page</title>
+<link rel="stylesheet" type="text/css" href="/forum/static/site.css" />
+</head>
+<body>
+<div class="navigation"><a href="/news/">Straipsniai</a></div>
+<img src="/forum/static/front.png" alt="WALITD" />
+
+<form action="" method="post">
+
+<input type="radio" name="vote" value="like"> Like<br>
+<input type="radio" name="vote" value="dislike"> Dislike<br>
+<input name="vote" type="submit" value="Vote">
+
+</form>
+
+
+<div><h> {{.Title | html}} </h></div>
+
+<table class="postuser">
+<td class="postuser"> <p> {{.Text | html}} </p> </td>
+</table>
+</body>
+</html>

@@ -8,7 +8,7 @@ import (
 type articlesContent struct{
 	NewsID uint32
 	Title string
-	UserIdent *users.UserInfo
+	UserIdent users.UserInfo
 	Date time.Time
 	Text string
 	Files []fileContent
