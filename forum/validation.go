@@ -8,7 +8,7 @@ func panicErr(err error) {
 
 func validBoardName(board string) bool {
 	slen := len(board)
-	if slen > 64 {
+	if slen == 0 || slen > 64 {
 		// current limit is 64
 		return false
 	}

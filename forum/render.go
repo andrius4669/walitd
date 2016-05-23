@@ -30,7 +30,7 @@ func renderBoardModPage(w http.ResponseWriter, r *http.Request, board string) {
 
 func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid uint32, mod bool) {
 	page := new(boardPage)
-/*
+	/*
 		page.Mod = mod
 		page.Board = board
 		page.Topic = "test topic"
@@ -49,7 +49,7 @@ func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid u
 			page.Pages = append(page.Pages, false)
 		}
 		page.CurrentPage = pid
-*/
+	*/
 	db := dbacc.OpenSQL()
 	defer db.Close()
 	if !queryBoard(db, page, board, pid, mod) {
@@ -62,7 +62,7 @@ func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid u
 
 func renderThread(w http.ResponseWriter, r *http.Request, board string, thread string, mod bool) {
 	page := new(threadPage)
-/*
+	/*
 		page.Mod = mod
 		page.Board = board
 		page.Topic = "test topic"
@@ -100,7 +100,7 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 		p.PostID = 127
 		p.UserIdent.Email = ""
 		page.Replies = append(page.Replies, p)
-*/
+	*/
 	db := dbacc.OpenSQL()
 	defer db.Close()
 	if !queryThread(db, page, board, thread, mod) {
