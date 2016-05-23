@@ -54,7 +54,7 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 	page.Board = board
 	page.Topic = "test topic"
 	page.Description = "some description describing this test board"
-	page.Thread.ID = 123
+	page.ID = 123
 	var p postContent
 	p.PostID = 123
 	p.Title = "lol this is title"
@@ -64,14 +64,14 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 		p.References = append(p.References, 124 + uint32(i))
 	}
 	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
-	page.Thread.OP = p
+	page.OP = p
 	p.PostID = 124
 	p.UserIdent.Name = "wandalizorours"
 	p.UserIdent.Trip = "!aksa6df54a1"
 	p.References = nil
 	p.References = append(p.References, 125)
 	p.Files = nil
-	page.Thread.Replies = append(page.Thread.Replies, p)
+	page.Replies = append(page.Replies, p)
 	p.PostID = 125
 	p.UserIdent.Name = "weep"
 	p.UserIdent.Email = "sage"
@@ -79,14 +79,14 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
 	p.Files = append(p.Files, fileContent{Name: "/deleted", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
 	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
-	page.Thread.Replies = append(page.Thread.Replies, p)
+	page.Replies = append(page.Replies, p)
 	p.PostID = 126
 	p.Title = ""
 	p.UserIdent.Name = ""
-	page.Thread.Replies = append(page.Thread.Replies, p)
+	page.Replies = append(page.Replies, p)
 	p.PostID = 127
 	p.UserIdent.Email = ""
-	page.Thread.Replies = append(page.Thread.Replies, p)
+	page.Replies = append(page.Replies, p)
 	render.Execute(w, "posts", page)
 	//http.Error(w, fmt.Sprintf("501 board %s thread %s (mod: %t) not implemented", board, thread, mod), 501)
 }

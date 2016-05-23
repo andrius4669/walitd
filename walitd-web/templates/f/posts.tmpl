@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>{{.Board}} - #{{.Thread.ID}}</title>
+<title>{{.Board}} - #{{.ID}}</title>
 <link rel="stylesheet" type="text/css" href="/forum/static/site.css" />
 </head>
 <body>
@@ -9,12 +9,12 @@
 <a href="/forum/">Forum</a>
 &gt; <a href="/forum/{{.Board}}/">/{{.Board}}/</a>
 {{if .Mod}}&gt; <a href="/forum/{{.Board}}/mod/">mod</a>{{end}}
-&gt; <a href="./{{.Thread.ID}}">#{{.Thread.ID}}</a>
+&gt; <a href="./{{.ID}}">#{{.ID}}</a>
 </div>
 
 <table class="posts">
 
-{{with .Thread.OP}}
+{{with .OP}}
 
 <tr>
 <td class="postuser">
@@ -89,7 +89,7 @@
 
 {{end}}
 
-{{range .Thread.Replies -}}
+{{range .Replies -}}
 
 <tr>
 <td class="postuser">

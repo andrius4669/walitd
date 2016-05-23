@@ -103,7 +103,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		if uid.Valid {
 			p.Threads[i].OP.User = users.GetUserInfo(uint32(uid.Int64))
 		}
-		// get info on last post
+		// get info about last post
 		err = db.QueryRow("SELECT postid, userid, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", bid, p.Threads[i].ID).Scan(&p.Threads[i].LastID, &uid, &p.Threads[i].Last.Name, &p.Threads[i].Last.Trip, &p.Threads[i].Last.Email, &p.Threads[i].LastDate)
 		panicErr(err)
 		if uid.Valid {
@@ -112,6 +112,9 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	}
 
 	return true
+}
+
+func queryPostFiles(p *postContent, db *sql.DB) {
 }
 
 func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool {
@@ -141,14 +144,76 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 	panicErr(err)
 	p.Board = board
 
-	err = db.QueryRow("SELECT threadid FROM threads WHERE boardid=$1 AND threadid=$2", bid, tid).Scan(&tid)
+	err = db.QueryRow("SELECT threadid FROM threads WHERE boardid=$1 AND threadid=$2", bid, tid).Scan(&p.ID)
 	if err == sql.ErrNoRows {
 		return false
 	}
 	panicErr(err)
 
+	rows, err := db.Query("SELECT postid, userid, pname, trip, email, title, postdate, message FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate ASC", bid, tid)
+	panicErr(err)
+	for rows.Next() {
+		var pc postContent
+		var uid sql.NullInt64
+		err = rows.Scan(&pc.PostID, &uid, &pc.UserIdent.Name, &pc.UserIdent.Trip, &pc.UserIdent.Email, &pc.Title, &pc.Date, &pc.Message)
+		panicErr(err)
+		if uid.Valid {
+			pc.UserIdent.User = users.GetUserInfo(uint32(uid.Int64))
+		}
 
+		if pc.PostID != tid {
+			p.Replies = append(p.Replies, pc)
+			p.refMap[pc.PostID] = len(p.Replies)
+		} else {
+			p.OP = pc
+			p.refMap[pc.PostID] = 0
+		}
+	}
+
+	queryPostFiles(&p.OP, db)
+	for i := range p.Replies {
+		queryPostFiles(&p.Replies[i], db)
+	}
+
+	formatPost(p, &p.OP, db)
+	for i := range p.Replies {
+		formatPost(p, &p.Replies[i], db)
+	}
 
 	// TODO(andrius)
 	return false
+}
+
+func sqlGetBoard(db *sql.DB, board string) (uint32, bool) {
+	var bid uint32
+	err := db.QueryRow("SELECT boardid FROM boards WHERE bname=$1", board).Scan(&bid)
+	if err == sql.ErrNoRows {
+		return 0, false
+	}
+	panicErr(err)
+	return bid, true
+}
+
+func sqlValidateBoard(db *sql.DB, board string) bool {
+	_, ok := sqlGetBoard(db, board)
+	return ok
+}
+
+func sqlValidatePost(db *sql.DB, board string, post uint32, thread *uint32) bool {
+	bid, ok := sqlGetBoard(db, board)
+	if !ok {
+		return false
+	}
+	var tid sql.NullInt64
+	err := db.QueryRow("SELECT threadid FROM posts WHERE boardid=$1 AND postid=$2", bid, post).Scan(&tid)
+	if err == sql.ErrNoRows {
+		return false
+	}
+	panicErr(err)
+	if tid.Valid {
+		*thread = uint32(tid.Int64)
+	} else {
+		*thread = post
+	}
+	return true
 }

@@ -72,7 +72,7 @@ type threadContent struct {
 	ID      uint32         // thread ID
 	OP      postContent    // OP
 	Replies []postContent  // replies
-	refmap  map[uint32]int // post ID -> reply id mapping
+	refMap  map[uint32]int // post ID -> reply id mapping
 }
 
 type threadInfo struct {
@@ -97,6 +97,6 @@ type boardPage struct {
 
 type threadPage struct {
 	boardInfo
-	Thread threadContent
+	threadContent
 	Mod    bool
 }

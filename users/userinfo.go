@@ -12,7 +12,7 @@ type UserInfo struct {
 	RegisteredDate time.Time // day of registration. note: it's not exact timestamp, it's just day
 	Role           string    // string representation of user's privilege. additional functions may exist which can interept this
 	Gender         string    // string representation of gender
-	Discription    string    // description
+	Description    string    // description
 }
 
 func GetUserInfo(id uint32) (*UserInfo) {
