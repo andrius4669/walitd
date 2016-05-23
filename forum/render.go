@@ -52,13 +52,17 @@ func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid u
 	*/
 	db := dbacc.OpenSQL()
 	defer db.Close()
-	queryBoard(db, page, board, pid, mod)
+	if !queryBoard(db, page, board, pid, mod) {
+		http.NotFound(w, r)
+		return
+	}
 	render.Execute(w, "threads", page)
 	//http.Error(w, fmt.Sprintf("501 board %s page %d (mod: %t) not implemented", board, page, mod), 501)
 }
 
 func renderThread(w http.ResponseWriter, r *http.Request, board string, thread string, mod bool) {
 	page := new(threadPage)
+	/*
 	page.Mod = mod
 	page.Board = board
 	page.Topic = "test topic"
@@ -96,6 +100,13 @@ func renderThread(w http.ResponseWriter, r *http.Request, board string, thread s
 	p.PostID = 127
 	p.UserIdent.Email = ""
 	page.Replies = append(page.Replies, p)
+	*/
+	db := dbacc.OpenSQL()
+	defer db.Close()
+	if !queryThread(db, page, board, thread, mod) {
+		http.NotFound(w, r)
+		return
+	}
 	render.Execute(w, "posts", page)
 	//http.Error(w, fmt.Sprintf("501 board %s thread %s (mod: %t) not implemented", board, thread, mod), 501)
 }

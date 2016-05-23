@@ -4,7 +4,7 @@ package forum
 // currently only github.com/lib/pq lib usage
 
 import (
-	//"fmt"
+	"fmt"
 	"encoding/json"
 	"database/sql"
 	"strconv"
@@ -32,6 +32,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	var bid uint32
 	err := db.QueryRow("SELECT boardid, topic, description, attributes FROM forum.boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
 	if err == sql.ErrNoRows {
+		fmt.Printf("fail @ initial select: no rows\n")
 		return false
 	}
 	panicErr(err)
@@ -61,6 +62,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	}
 
 	if page == 0 || (pagelimit != 0 && page > pagelimit) {
+		fmt.Printf("fail @ page check\n")
 		return false
 	}
 
@@ -74,6 +76,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 
 	// if no threads and no limit, only show existing threads
 	if len(p.Threads) == 0 && page != 1 && pagelimit == 0 {
+		fmt.Printf("fail @ threads num check: len=%d page=%d pl=%d\n", len(p.Threads), page, pagelimit)
 		return false
 	}
 
@@ -82,15 +85,14 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	panicErr(err)
 
 	var cp uint32
-	for cp = 0; cp < (allthreads + tpp - 1) / tpp; cp++ {
+	p.Pages = append(p.Pages, true)
+	for cp = 1; cp < (allthreads + tpp - 1) / tpp; cp++ {
 		p.Pages = append(p.Pages, true)
 	}
 	if pagelimit != 0 {
 		for ; cp < pagelimit; cp++ {
 			p.Pages = append(p.Pages, false)
 		}
-	} else if len(p.Pages) == 0 {
-		p.Pages = append(p.Pages, false)
 	}
 
 	p.CurrentPage = page
@@ -109,6 +111,11 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		if uid.Valid {
 			p.Threads[i].Last.User = users.GetUserInfo(uint32(uid.Int64))
 		}
+		// get reply count
+		var numrepl uint32
+		err = db.QueryRow("SELECT COUNT(*) FROM forum.posts WHERE boardid=$1 AND threadid=$2", bid, p.Threads[i].ID).Scan(&numrepl)
+		panicErr(err)
+		p.Threads[i].Replies = numrepl - 1
 	}
 
 	p.Mod = mod
@@ -154,6 +161,8 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 
 	rows, err := db.Query("SELECT postid, userid, pname, trip, email, title, postdate, message FROM forum.posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate ASC", bid, tid)
 	panicErr(err)
+
+	p.refMap = make(map[uint32]int)
 	for rows.Next() {
 		var pc postContent
 		var uid sql.NullInt64
@@ -181,6 +190,8 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 	for i := range p.Replies {
 		formatPost(p, &p.Replies[i], db)
 	}
+
+	p.Mod = mod
 
 	return true
 }
