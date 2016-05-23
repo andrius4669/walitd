@@ -45,11 +45,6 @@ func validateRegisterForm(form *userForm) *userForm  {
 //	fmt.Printf("%v \n", form.ErrorCnt)
 	return form;
 }
-func validateLoginForm(form *loginInfo) *loginInfo  {
-	//TODO: check login
-
-	return form;
-}
 func validateProfileForm(form *user) *user{
 	form.Err = 0;
 

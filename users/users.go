@@ -51,9 +51,15 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 	ses := ss.GetUserSession(w, r);
 	fmt.Printf("%v \n", ses);
 	rpath := r.URL.Path[pathi+1:]
-	if r.Method == "GET" || r.Method == "HEAD" {
 
-		if (true){ //TODO: if not logged redirect to login page
+	if r.Method == "GET" || r.Method == "HEAD" {
+		p := str.IndexByte(rpath, '/')
+		if p == -1 {
+			// syntax is /zzz/ not /zzz in all GET/HEAD cases
+			http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
+			return
+		}
+		if (ses != nil || rpath[:p] == "profile"){
 			if rpath == "" {
 				groups := getGroupsPage()
 				arr := new(userAddForm) //it will be empty, in this case
@@ -111,10 +117,12 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 							http.Redirect( w, r , "/users/", http.StatusFound);
 						}
 						renderProfilePage(w, r, obj);
+						return
 					}
 
 				} else {
 					http.Redirect( w, r , "/users/", http.StatusFound);
+					return
 				}
 				return
 			}
@@ -180,14 +188,15 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			}
 
 
-			http.Redirect( w, r , "/users/groups", http.StatusFound);
+			http.Redirect( w, r , "/users/login/", http.StatusFound);
+			return
 		}
 	} else if r.Method == "POST" {
 
 		r.ParseForm()
 		form := r.Form;
 		i := str.IndexByte(rpath, '/')
-		if (true || (rpath[:i] == "login" || rpath[:i] == "register")){ //TODO: if not logged redirect to login page if not post form login or register
+		if (ses != nil || (rpath[:i] == "login" || rpath[:i] == "register")){
 			if rpath == "" {
 				obj := new(userAddForm);
 
@@ -219,14 +228,21 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				f.Username = form["username"][0];
 				f.Pass = form["pass"][0];
 				f.ErrorSet = false;
-				obj := validateLoginForm(f);
+				login(f);
 
-				if (obj.ErrorSet){
+				if (f.ErrorSet){
 					renderLoginPage(w, r, f);
 					return;
 				} else{
+					loginS(w, r, f);
 					http.Redirect( w, r , "/users/groups", http.StatusFound);
 				}
+
+				return
+			}
+			if rpath[:i] == "logout" {
+				logout(w, r);
+				http.Redirect( w, r , "/users/login/", http.StatusFound);
 
 				return
 			}

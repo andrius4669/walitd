@@ -197,6 +197,12 @@ func queryGetGroupList(db *sql.DB,g *groupsPage, userid int) {
 		g.GroupsInfo = append(g.GroupsInfo, *gg);
 	}
 }
+func queryCheckLogin(db *sql.DB, l *loginInfo) error{
+	var username sql.NullString;
+	err := db.QueryRow("Select username from users where username=$1 and password=$2", l.Username, l.Pass).Scan(&username);
+//	panicErr(err);
+	return err;
+}
 func panicErr(err error) {
 	if err != nil {
 		panic(err)

@@ -5,6 +5,8 @@ import (
 	"time"
 	"../dbacc"
 	"strconv"
+	ss "../sessions"
+	"net/http"
 )
 
 type loginPage struct{
@@ -257,4 +259,31 @@ func editGroup(obj *group, id int){
 	db := dbacc.OpenSQL();
 	defer db.Close();
 	queryUpdateGroup(db, obj, id);
+}
+func login(l *loginInfo){
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	ee := queryCheckLogin(db, l);
+	if ee != nil{
+		l.ErrorSet = true;
+		l.Error = "<p class='error'>bad authentification info</p>";
+	} else{
+		l.ErrorSet = false;
+	}
+
+}
+func loginS(w http.ResponseWriter, r *http.Request, l *loginInfo)  {
+	uu := new(user);
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	queryGetUserByUsername(db, uu, l.Username);
+	q := new(ss.UserSessionInfo);
+//	q.Role = uint32(uu.Role);
+//	q.Uid = uint32(uu.Userid);
+	q.Role = 1;
+	q.Uid = 1;
+	ss.MakeUserSession(w, r, q);
+}
+func logout(w http.ResponseWriter, r *http.Request)  {
+
 }
