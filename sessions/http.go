@@ -14,7 +14,7 @@ type  UserSessionInfo struct {
 func MakeUserSession(w http.ResponseWriter, r *http.Request, si *UserSessionInfo) *SessionStore {
 	cookie, _ := r.Cookie(manager.cookieName)
 	var sid string
-	if cookie.Value != "" {
+	if cookie != nil && cookie.Value != "" {
 		sid = cookie.Value
 	} else {
 		sid = manager.newSessionID()
