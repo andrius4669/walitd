@@ -4,6 +4,9 @@ import (
 	"time"
 	"sync"
 	"container/list"
+	"io"
+	"crypto/rand"
+	"encoding/base64"
 )
 
 // stores sessions
@@ -20,6 +23,14 @@ type Manager struct {
 	maxlifetime int64
 	sessions    map[string]*list.Element
 	list        *list.List
+}
+
+func (m *Manager) newSessionID() string {
+    b := make([]byte, 32)
+    if _, err := io.ReadFull(rand.Reader, b); err != nil {
+        panic(err)
+    }
+    return base64.URLEncoding.EncodeToString(b)
 }
 
 // checks gc
@@ -87,6 +98,30 @@ func (m *Manager) SessionUpdate(sid string) *SessionStore {
 	return nil
 }
 
+func (m *Manager) SessionUpdateOrNew(sid string) *SessionStore {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+
+	s, ok := m.sessions[sid]
+	if ok {
+		s.Value.(*SessionStore).st = time.Now() // update time
+		m.list.MoveToFront(s)
+
+		m.checkGC()
+
+		return s.Value.(*SessionStore)
+	}
+
+	m.checkGC()
+
+	v := make(map[string]interface{}, 0)
+	ns := &SessionStore{sid: sid, st: time.Now(), val: v}
+	el := m.list.PushFront(ns)
+	m.sessions[sid] = el
+
+	return ns
+}
+
 var manager = &Manager{}
 
 func init() {
@@ -94,8 +129,4 @@ func init() {
 	manager.maxlifetime = 3600
 	manager.sessions = make(map[string]*list.Element)
 	manager.list = list.New()
-}
-
-func GetManager() *Manager {
-	return manager
 }
