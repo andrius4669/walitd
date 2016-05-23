@@ -4,6 +4,7 @@ import (
 //	"fmt"
 //	"net/http"
 	"net/mail"
+	"../dbacc"
 )
 
 func validateRegisterForm(form *userForm) *userForm  {
@@ -32,6 +33,16 @@ func validateRegisterForm(form *userForm) *userForm  {
 		form.EmailErr = makeErrorMessage("Bad email");
 	}
 	//TODO check if username is available
+	uu := new(user);
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	ee := queryGetUserByUsername(db, uu, form.Username);
+//	fmt.Printf("%v \n", uu)
+	if (ee == nil){
+		form.p();
+		form.UsernameErr = makeErrorMessage("User with this username already exist")
+	}
+//	fmt.Printf("%v \n", form.ErrorCnt)
 	return form;
 }
 func validateLoginForm(form *loginInfo) *loginInfo  {

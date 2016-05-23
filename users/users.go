@@ -94,11 +94,17 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					}
 					//TODO: check if user's own profile
 					if (true){
-						obj := getUser(id);
+						obj, ee := getUser(id);
+						if (ee != nil){
+							http.Redirect( w, r , "/users/", http.StatusFound);
+						}
 						renderEditProfilePage(w, r, obj);
 					}else{
 						//TODO get obj from database;
-						obj := getUser(id);
+						obj, ee := getUser(id);
+						if (ee != nil){
+							http.Redirect( w, r , "/users/", http.StatusFound);
+						}
 						renderProfilePage(w, r, obj);
 					}
 
@@ -226,7 +232,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					arr.Email = form["email"][0];
 					arr.City = form["town"][0];
 					obj := validateRegisterForm(arr);
-					if (obj.ErrorCnt > 0 || true){ //TODO: check why error counter doesnt work
+					if (obj.ErrorCnt > 0){
 						renderRegisterPage(w, r, obj);
 					} else {
 						register(obj);
@@ -287,7 +293,10 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 						http.Redirect( w, r , "/users/", http.StatusFound);
 						return;
 					}
-					arr := getUser(id);
+					arr, ee := getUser(id);
+					if (ee != nil){
+						http.Redirect( w, r , "/users/", http.StatusFound);
+					}
 					arr.Email =form["email"][0];
 					arr.FirstName =form["firstname"][0];
 					arr.SecondName =form["secondname"][0];

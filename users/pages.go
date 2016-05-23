@@ -3,6 +3,8 @@ package users
 
 import (
 	"time"
+	"../dbacc"
+	"strconv"
 )
 
 type loginPage struct{
@@ -24,6 +26,7 @@ type user struct {
 	SecondName string;
 	SecondNameErr string
 	Username string;
+	UsernameErr string;
 	Pass string;
 	PassErr string;
 	Role int;
@@ -128,26 +131,26 @@ type userForm struct {
 	ErrorCnt int;
 
 }
-func (m userForm) p() {
+func (m *userForm) p() {
 	m.ErrorCnt = m.ErrorCnt + 1;
 }
 func makeErrorMessage(m string) string{
 	return "<p class='error'>" + m + "</p>";
 }
 
-func (m userForm) IsMale() bool{
+func (m *userForm) IsMale() bool{
 	if (m.Gender == 0){
 		return true;
 	}
 	return false;
 }
-func (m userForm) IsFemale() bool {
+func (m *userForm) IsFemale() bool {
 	if (m.Gender == 1){
 		return true;
 	}
 	return false;
 }
-func (m userForm) IsDunno() bool {
+func (m *userForm) IsDunno() bool {
 	if (m.Gender == 2){
 		return true;
 	}
@@ -164,22 +167,14 @@ type loginInfo struct{
 	ErrorSet bool;
 }
 
-func getUser(id int) *user  {
+func getUser(id int) (*user, error)  {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	idd := strconv.Itoa(id);
 	//TODO get dynamic info
 	obj := new(user);
-	obj.Userid = 1;
-	obj.Email = "mail@mail.com";
-	obj.FirstName = "pirmas ardas";
-	obj.SecondName = " antrs names";
-	obj.Username = "userio prisijungimas";
-	obj.RoleN = "rol4";
-	obj.City = "kaunas";
-	obj.Country = "LL";
-	obj.Telephone = "584848";
-	obj.GenderN = "LL";
-	obj.Description = "desc";
-	obj.Picture = "adresas";
-	return obj;
+	err := queryGetUser(db, obj, idd);
+	return obj, err;
 }
 
 type messageForm struct {
@@ -220,10 +215,10 @@ func sendMessage(m *messageForm) *messageForm {
 	//TODO send message
 	return m;
 }
-func register(r *userForm) *userForm {
-	//TODO regist user
-	return r;
-
+func register(r *userForm) {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	queryAddUser(db, r);
 }
 func createFriendListF()  {
 	//TODO create friend list

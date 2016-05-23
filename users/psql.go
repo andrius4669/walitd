@@ -5,14 +5,91 @@ import (
 	"database/sql"
 //	"strconv"
 )
-
-func queryGetUser(db *sql.DB, u *user, id string){
-	err := db.QueryRow("SELECT userid, username, email, name, surname, role, birthday, city, country, telephone, gender, description, created, updated, photo, photocreated FROM users where userid=$1;", id).Scan(&u.Userid, &u.Username, &u.Email, &u.FirstName, &u.SecondName, &u.Role, &u.Birthday, &u.City, &u.Country, &u.Telephone, &u.Gender, &u.Description, &u.Created, &u.Updated, &u.Picture, &u.PictureCreated);
+func queryGetUser(db *sql.DB, u *user, id string) error{
+	var email, city, country, phone, desc, picture sql.NullString;
+	err := db.QueryRow("SELECT userid, username, email, firstname, lastname, role, city, country, telephone, gender, description, created, updated, photo, photocreated FROM users where userid=$1;", id).
+	Scan(&u.Userid, &u.Username, &email , &u.FirstName, &u.SecondName, &u.Role, &city, &country, &phone, &u.Gender, &desc, &u.Created, &u.Updated, &picture, &u.PictureCreated);
+	if (email.Valid){
+		u.Email = email.String;
+	}
+	if (city.Valid){
+		u.City = city.String;
+	}
+	if (country.Valid){
+		u.Country = country.String;
+	}
+	if (phone.Valid){
+		u.Telephone = phone.String;
+	}
+	if (desc.Valid){
+		u.Description = desc.String;
+	}
+	if (picture.Valid){
+		u.Picture = picture.String;
+	}
+	if (u.Gender == 0){
+		u.GenderN ="Male"
+	}
+	if (u.Gender == 1){
+		u.GenderN ="Female"
+	}
+	if (u.Gender == 2){
+		u.GenderN ="Uncertain"
+	}
+	if (u.Role == 1){
+		u.RoleN ="User"
+	}
+	if (u.Role == 2){
+		u.RoleN ="Admin"
+	}
+	if (u.Role == 3) {
+		u.RoleN = "Super Admin"
+	}
 	panicErr(err);
+	return err;
 }
-func queryGetUserByUsername(db *sql.DB,u *user, username string){
-	err := db.QueryRow("SELECT userid, username, email, name, surname, role, birthday, city, country, telephone, gender, description, created, updated, photo, photocreated FROM users where userid=$1;", username).Scan(&u.Userid, &u.Username, &u.Email, &u.FirstName, &u.SecondName, &u.Role, &u.Birthday, &u.City, &u.Country, &u.Telephone, &u.Gender, &u.Description, &u.Created, &u.Updated, &u.Picture, &u.PictureCreated);
-	panicErr(err);
+func queryGetUserByUsername(db *sql.DB,u *user, username string) error {
+	var email, city, country, phone, desc, picture sql.NullString;
+	err := db.QueryRow("SELECT userid, username, email, firstname, lastname, role, city, country, telephone, gender, description, created, updated, photo, photocreated FROM users where username=$1;", username).
+	Scan(&u.Userid, &u.Username, &email , &u.FirstName, &u.SecondName, &u.Role, &city, &country, &phone, &u.Gender, &desc, &u.Created, &u.Updated, &picture, &u.PictureCreated);
+	if (email.Valid){
+		u.Email = email.String;
+	}
+	if (city.Valid){
+		u.City = city.String;
+	}
+	if (country.Valid){
+		u.Country = country.String;
+	}
+	if (phone.Valid){
+		u.Telephone = phone.String;
+	}
+	if (desc.Valid){
+		u.Description = desc.String;
+	}
+	if (picture.Valid){
+		u.Picture = picture.String;
+	}
+	if (u.Gender == 0){
+		u.GenderN ="Male"
+	}
+	if (u.Gender == 1){
+		u.GenderN ="Female"
+	}
+	if (u.Gender == 2){
+		u.GenderN ="Uncertain"
+	}
+	if (u.Role == 1){
+		u.RoleN ="User"
+	}
+	if (u.Role == 2){
+		u.RoleN ="Admin"
+	}
+	if (u.Role == 3){
+		u.RoleN ="Super Admin"
+	}
+//	panicErr(err);
+	return err;
 }
 func queryGetMessages(db *sql.DB, m *messages, id int){
 	rows, err := db.Query("Select sender, reciever, message, created from messages where sender=$1;", id);
@@ -59,7 +136,7 @@ func queryAddMessage(db *sql.DB, m *messageForm)  {
 	panicErr(err);
 }
 func queryAddUser(db *sql.DB, u *userForm){
-	_, err := db.Query("insert into users (userid, username, password, firstname, lastname, role, gender, created, updated) values(0, $1, $2, $3, $4, $5, $6, now(), now());", u.Username, u.FirstName, u.SecondName, 1, u.Gender);
+	_, err := db.Query("insert into users (username, password, firstname, lastname, role, gender, created, updated, photocreated, active, email) values($1, $2, $3, $4, $5, $6, now(), now(), now(), 1, $7);", u.Username, u.Pass, u.FirstName, u.SecondName, 1, u.Gender, u.Email);
 	panicErr(err);
 }
 func queryUpdateUser(db *sql.DB, u *user){
