@@ -38,7 +38,7 @@ type user struct {
 	Created time.Time;
 	Updated time.Time;
 	Picture string;
-	PictureCreatedPictureCreated time.Time;
+	PictureCreated time.Time;
 	Err int;
 }
 func (u user) p(){
