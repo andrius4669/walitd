@@ -24,7 +24,7 @@ rpath := r.URL.Path[pathi+1:]
 if r.Method == "GET" || r.Method == "HEAD" {
 	if rpath == "" {
 	// Display admin page
-		renderAdminPage(w, r)
+		renderAdminPage(w, r, new(deleteValidate))
 	return
 	}
 	i := str.IndexByte(rpath, '/')
@@ -57,7 +57,10 @@ return
 	deleteA := form["AuthorDelete"][0];
 	fmt.Printf("%v \n", delete);
 	fmt.Printf("%v \n", deleteA);
-	renderAdminPage(w, r)
+	f := new(deleteValidate)
+	f.deleteErr = "deeeeeeel"
+	obj := confirmDelete(f);
+	renderAdminPage(w, r, obj)
 	//	return
 	//}
 

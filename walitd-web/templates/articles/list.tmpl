@@ -10,13 +10,19 @@
 <tr>
 <th>Author</th>
 <th>Category</th>
+<th>Score</th>
+<th>VisitCount</th>
+<th>Upload Date</th>
 <th>Description</th>
-<th>Full Article</th>
+<th>Link</th>
 </tr>
 {{range .Boards -}}
 <tr>
 <td><a href="{{.Author}}/">{{.Author}}</a></td>
 <td>{{.Category | html}}</td>
+<td>{{.Score | html}}</td>
+<td>{{.Visit_Count | html}}</td>
+<td>{{.UploadDate | html}}</td>
 <td>{{.Description | html}}</td>
 <td><a href="articles/{{.FullArticleLink}}/">read more...</a></td>
 </tr>
