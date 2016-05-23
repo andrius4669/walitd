@@ -274,11 +274,11 @@ func validateInputPost(db *sql.DB, d *postData) bool {
 }
 
 func sqlStoreBoard(db *sql.DB, d *boardData) bool {
-	stmt, err := db.Prepare("INSERT INTO boards (bname, topic, description, attributes) VALUES ($1, $2, $3, $4)")
+	stmt, err := db.Prepare("INSERT INTO forum.boards (bname, topic, description, attributes) VALUES ($1, $2, $3, $4)")
 	panicErr(err)
 	type attributes struct {
-		PageLimit      uint32
-		ThreadsPerPage uint32
+		PageLimit      uint32 `json:,omitempty`
+		ThreadsPerPage uint32 `json:,omitempty`
 		AllowNewThread bool
 		AllowFiles     bool
 	}
@@ -291,5 +291,5 @@ func sqlStoreBoard(db *sql.DB, d *boardData) bool {
 	fmt.Printf("encattr=%s\n", encattr)
 	_, err = stmt.Exec(d.Board, d.Topic, d.Description, encattr) // TODO
 	panicErr(err)
-	return false
+	return true
 }

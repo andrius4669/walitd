@@ -1,8 +1,8 @@
 package forum
 
 import (
-	//"fmt"
 	"../render"
+	"fmt"
 	"net/http"
 	"strconv"
 	str "strings"
@@ -147,8 +147,15 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		http.NotFound(w, r)
 		return
 	} else if r.Method == "POST" {
-		// TODO(andrius) decide & implement posting
-		http.Error(w, "501 POST routines not yet implemented", 501)
+		switch rpath {
+		case "newboard":
+			handleNewBoard(w, r)
+			return
+		case "post":
+			handlePost(w, r)
+			return
+		}
+		http.Error(w, fmt.Sprintf("501 POST routines not implemented for %s", r.URL.Path), 501)
 	} else {
 		http.Error(w, "501 method not implemented", 501)
 	}
