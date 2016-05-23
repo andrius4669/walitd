@@ -31,7 +31,7 @@ func MakeUserSession(w http.ResponseWriter, r *http.Request, si *UserSessionInfo
 // when checking if active session exists, use this
 func GetUserSession(w http.ResponseWriter, r *http.Request) *SessionStore {
 	cookie, _ := r.Cookie(manager.cookieName)
-	if cookie.Value == "" {
+	if cookie == nil || cookie.Value == "" {
 		return nil
 	}
 	sid := cookie.Value

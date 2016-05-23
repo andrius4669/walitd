@@ -26,11 +26,11 @@ type Manager struct {
 }
 
 func (m *Manager) newSessionID() string {
-    b := make([]byte, 32)
-    if _, err := io.ReadFull(rand.Reader, b); err != nil {
-        panic(err)
-    }
-    return base64.URLEncoding.EncodeToString(b)
+	b := make([]byte, 32)
+	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+		panic(err)
+	}
+	return base64.URLEncoding.EncodeToString(b)
 }
 
 // checks gc
