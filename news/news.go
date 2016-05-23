@@ -6,7 +6,10 @@ import (
 	"net/http"
 	str "strings"
 	"strings"
-	//"strconv"
+	"strconv"
+	//"database/sql"
+	"time"
+	"../dbacc"
 )
 
 func LoadTemplates() {
@@ -43,8 +46,14 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				renderArticlesList(w, r)
 			} else {
 				// display moderation page for specific board. possibly will check for admin
-				//renderArticles(w, r, rpath[i+1:])
-				renderArticles(w, r, rpath[i+1:])
+				//renderArticles(w, r, rpath[i+1:])s[:len(s)-len(suffix)]
+				//fmt.Printf("%v \n", rpath[:len(rpath) - (len(rpath) - 1)]);
+				//fmt.Printf("%v \n", rpath[:len(rpath)]);
+				//fmt.Printf("%v \n", rpath[i+1:len(rpath) - 1]);
+
+				temp, err := strconv.Atoi(rpath[i+1:len(rpath) - 1])
+				fmt.Printf("%v \n", err);
+				renderArticles(w, r, temp)
 			}
 			return
 		}
@@ -108,32 +117,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			return
 		}
 
-		/* if group == "thumb" {
-			// server thumbnail
-			serveThumb(w, r, board, rpath)
-			return
-		} else if group == "static" {
-			// serve static file
-			serveBoardStatic(w, r, board, rpath)
-			return
-		} */
 
-		/*
-		if i = str.IndexByte(rpath, '/'); i != -1 {
-			// ignore anything including and past /
-			rpath = rpath[:i]
-		}
-		*/
-
-		/*if group == "thread" {
-			// render specific thread
-			renderThread(w, r, board, rpath, mod)
-			return
-		} else if group == "src" {
-			// serve source file
-			serveSrc(w, r, board, rpath)
-			return
-		}*/
 		http.NotFound(w, r)
 		return
 	} else if r.Method == "POST" {
@@ -146,23 +130,33 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		if rpath[:i] == "articles" {
 			vote := form["vote"][0];
 			fmt.Printf("%v \n", vote);
-			renderArticles(w, r, rpath[i+1:])
+			temp, err := strconv.Atoi(rpath[i+1:len(rpath) - 1])
+			fmt.Printf("%v \n", err);
+			renderArticles(w, r, temp)
 			return
 		}
 		if rpath[:i] == "createArticle" {
-			name := form["name"][0];
-			description := form["description"][0];
-			article := form["article"][0];
+			arr := new(articlesList)
+			arr.Name = form["name"][0];
+			arr.Description = form["description"][0];
+			arr.Article = form["article"][0];
+			arr.Category = form["category"][0];
+			arr.Author = 1
+			tim := time.Now()
+			tim.Format("2006-01-02 15:04:05")
+			arr.UploadDate = tim.Format("2006-01-02")
 			tags := form["tags"][0];
 			noCaseTags := strings.ToLower(tags)
 			slices := strings.Split(noCaseTags, ",")
-			fmt.Printf("%v \n", name);
-			fmt.Printf("%v \n", description);
-			fmt.Printf("%v \n", article);
+			//fmt.Printf("%v \n", name);
+			//fmt.Printf("%v \n", description);
+			//fmt.Printf("%v \n", article);
 			fmt.Printf("%v \n", tags);
 			fmt.Printf("%v \n", slices);
 			fmt.Printf("%v \n", slices[1]);
-
+			db := dbacc.OpenSQL()
+			defer db.Close()
+			createArticle(db, arr)
 			http.Redirect( w, r , "/news/", http.StatusFound);
 			return
 		}

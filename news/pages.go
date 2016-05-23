@@ -15,6 +15,8 @@ type articlesContent struct{
 }
 
 type articlesList struct {
+	ID int
+	Article string
 	Name string
 	Score int
 	Visit_Count int

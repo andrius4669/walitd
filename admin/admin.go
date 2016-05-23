@@ -61,6 +61,9 @@ return
 	f.deleteErr = "deeeeeeel"
 	obj := confirmDelete(f);
 	renderAdminPage(w, r, obj)
+	if delete != ""	{
+
+	}
 	//	return
 	//}
 

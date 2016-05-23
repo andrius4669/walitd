@@ -23,6 +23,19 @@ td.postuser {
 	padding-left: 4px;
 }
 
+td.article, td.postbody {
+    border: 1px dashed black;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+
+td.article {
+	height: 60px;
+	width: 600px;
+	background-color: #DDFFDD;
+	padding-left: 4px;
+}
+
 td.postbody {
 	vertical-align: top;
 }
@@ -102,4 +115,9 @@ td.postbody {
 	padding-left: 2px;
 	padding-right: 2px;
 	padding-top: 2px;
+}
+
+table#t01 {
+    width: 100%;
+    border: 1px solid black;
 }
