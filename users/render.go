@@ -13,6 +13,7 @@ func renderLoginPage(w http.ResponseWriter, r *http.Request, f *loginInfo)  {
 	page.Name = "Login";
 	page.Header = "Login page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "login", f)
 	render.Execute(w, "footer", nil);
 }
@@ -21,6 +22,7 @@ func renderCreateFriendListPage(w http.ResponseWriter, r *http.Request)  {
 	page.Name = "Create Friend List";
 	page.Header = "Create Friend page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "createfriendllist", nil);
 	render.Execute(w, "footer", nil);
 }
@@ -29,6 +31,7 @@ func renderCreateGroupPage(w http.ResponseWriter, r *http.Request, obj *group)  
 	page.Name = "Create group";
 	page.Header = "Create group page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "creategroup", obj)
 	render.Execute(w, "footer", nil);
 }
@@ -37,6 +40,7 @@ func renderFriendListPage(w http.ResponseWriter, r *http.Request, friend *userAd
 	page.Name = "Friend List";
 	page.Header = "Friend list page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	for i := 0; i < len(list.UsersInfo); i++ {
 		render.Execute(w, "profile", list.UsersInfo[i])
 	}
@@ -49,6 +53,7 @@ func renderGroupPage(w http.ResponseWriter, r *http.Request, obj *group)  {
 	page.Name = "Group";
 	page.Header = "Group page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "group", obj);
 	render.Execute(w, "footer", nil);
 }
@@ -57,6 +62,7 @@ func renderGroupEditPage(w http.ResponseWriter, r *http.Request,obj *group)  {
 	page.Name = "Group";
 	page.Header = "Group page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "groupEdit", obj);
 	render.Execute(w, "footer", nil);
 }
@@ -65,6 +71,7 @@ func renderGroupsPage(w http.ResponseWriter, r *http.Request, grp *groupsPage, o
 	page.Name = "Groups";
 	page.Header = "Groups page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	for i := 0; i < len(grp.GroupsInfo); i++ {
 		render.Execute(w, "group", grp.GroupsInfo[i])
 	}
@@ -79,6 +86,7 @@ func renderMessagesPage(w http.ResponseWriter, r *http.Request, obj *messages, m
 	page.Name = "Messages";
 	page.Header = "Messages page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "messages", obj);
 	render.Execute(w, "sendmessage", mm);
 	render.Execute(w, "footer", nil);
@@ -88,6 +96,7 @@ func renderProfilePage(w http.ResponseWriter, r *http.Request, obj *user)  {
 	page.Name = "Profile";
 	page.Header = "Profile page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "profile", obj)
 	render.Execute(w, "footer", nil);
 }
@@ -96,6 +105,7 @@ func renderEditProfilePage(w http.ResponseWriter, r *http.Request, obj *user)  {
 	page.Name = "Profile";
 	page.Header = "Profile page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil)
 	render.Execute(w, "profileEdit", obj)
 	render.Execute(w, "footer", nil);
 }
@@ -104,6 +114,7 @@ func renderRegisterPage(w http.ResponseWriter, r *http.Request, f *userForm)  {
 	page.Name = "Register";
 	page.Header = "Register page";
 	render.Execute(w, "header", page);
+	render.Execute(w, "menu", nil);
 	render.Execute(w, "register", f)
 	render.Execute(w, "footer", nil);
 }

@@ -230,13 +230,13 @@ func register(r *userForm) {
 func createFriendListF()  {
 	//TODO create friend list
 }
-func createGroup(g *group) ( bool){
+func createGroup(g *group, ses_user_id int) ( bool){
 	db := dbacc.OpenSQL();
 	defer db.Close();
 	gg := new(group);
 	ee := queryGetGroupByName(db, gg, g.Name);
 	if (ee != nil){
-		queryCreateGroup(db, g, 1);// todo set dynamic owner
+		queryCreateGroup(db, g, ses_user_id);// todo set dynamic owner
 		return true;
 	} else{
 		return false;

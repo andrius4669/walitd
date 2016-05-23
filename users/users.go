@@ -1,7 +1,7 @@
 package users
 
 import (
-	"fmt"
+//	"fmt"
 	"../render"
 	"net/http"
 	"strconv"
@@ -27,6 +27,7 @@ func LoadTemplates() {
 	render.Load("removefriend", "users/removeFriend.tmpl");
 	render.Load("sendmessage", "users/sendMessage.tmpl");
 	render.Load("sharedNews", "users/sharedNews.tmpl");
+	render.Load("menu", "menu.tmpl");
 }
 // users/createfriendlist GET/POST
 // users/creategroup GET/POST
@@ -49,8 +50,17 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 
 	//get session info -- also known as using magic
 	ses := ss.GetUserSession(w, r);
-	fmt.Printf("%v \n", ses);
+	var ses_user_id int;
+	if (ses != nil){
+		uses := new(ss.UserSessionInfo);
+		ss.FillUserInfo(ses, uses);
+		ses_user_id = int(uses.Uid);
+	}
+
+//	fmt.Printf("%v \n", ses);
+
 	rpath := r.URL.Path[pathi+1:]
+//	fmt.Printf("path: %v \n sesija: %v \n if: %v \n", rpath, ses, (ses != nil));
 
 	if r.Method == "GET" || r.Method == "HEAD" {
 		p := str.IndexByte(rpath, '/')
@@ -235,7 +245,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					return;
 				} else{
 					loginS(w, r, f);
-					http.Redirect( w, r , "/users/groups", http.StatusFound);
+					http.Redirect( w, r , "/users/groups/", http.StatusFound);
 				}
 
 				return
@@ -275,7 +285,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				obj.Name = form["name"][0];
 				obj.Description = form["desc"][0];
 				var a bool;
-				a = createGroup(obj);
+				a = createGroup(obj, ses_user_id);
 				if a{
 					http.Redirect( w, r , "/users/groups/", http.StatusFound);
 					return
