@@ -276,7 +276,20 @@ func validateInputPost(db *sql.DB, d *postData) bool {
 func sqlStoreBoard(db *sql.DB, d *boardData) bool {
 	stmt, err := db.Prepare("INSERT INTO boards (bname, topic, description, attributes) VALUES ($1, $2, $3, $4)")
 	panicErr(err)
-	_, err = stmt.Exec(d.Board, d.Topic, d.Description, "{}") // TODO
+	type attributes struct {
+		PageLimit      uint32
+		ThreadsPerPage uint32
+		AllowNewThread bool
+		AllowFiles     bool
+	}
+	var attr attributes
+	attr.PageLimit = d.PageLimit
+	attr.ThreadsPerPage = d.ThreadsPerPage
+	attr.AllowNewThread = d.AllowNewThread
+	attr.AllowFiles = d.AllowFiles
+	encattr, _ := json.Marshal(attr)
+	fmt.Printf("encattr=%s\n", encattr)
+	_, err = stmt.Exec(d.Board, d.Topic, d.Description, encattr) // TODO
 	panicErr(err)
 	return false
 }

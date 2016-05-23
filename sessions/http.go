@@ -16,8 +16,9 @@ func MakeUserSession(w http.ResponseWriter, r *http.Request, si *UserSessionInfo
 	cookie, _ := r.Cookie(manager.cookieName)
 	var sid string
 	if cookie != nil && cookie.Value != "" {
-		sid = cookie.Value
-	} else {
+		sid, _ = url.QueryUnescape(cookie.Value)
+	}
+	if sid == "" {
 		sid = manager.newSessionID()
 	}
 	s := manager.SessionUpdateOrNew(sid)
@@ -42,7 +43,10 @@ func GetUserSession(w http.ResponseWriter, r *http.Request) *SessionStore {
 	if cookie == nil || cookie.Value == "" {
 		return nil
 	}
-	sid := cookie.Value
+	sid, _ := url.QueryUnescape(cookie.Value)
+	if sid == "" {
+		return nil
+	}
 	s := manager.SessionUpdate(sid)
 	if s == nil {
 		return nil
@@ -66,8 +70,10 @@ func pruneUserSession(w http.ResponseWriter, r *http.Request) {
 	if cookie == nil || cookie.Value == "" {
 		return // no session
 	}
-	sid := cookie.Value
-	manager.SessionPrune(sid)
+	sid, _ := url.QueryUnescape(cookie.Value)
+	if sid != "" {
+		manager.SessionPrune(sid)
+	}
 	exp := time.Now()
 	sc := http.Cookie{
 		Name:     manager.cookieName,
