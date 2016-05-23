@@ -21,7 +21,7 @@ func queryArticlesList(db *sql.DB, p *ArticlesFrontPage) {
 		var b articlesList
 		rows.Scan(&b.Name, &b.Score, &b.Visit_Count, &b.Description, &b.Category, &b.Author, &b.UploadDate)
 
-		rows2, err := db.Query("SELECT username FROM users WHERE id=$1",b.Name)
+		rows2, err := db.Query("SELECT username FROM users WHERE userid=$1",b.Name)
 		panicErr(err)
 		rows2.Scan(&b.AuthorName)
 
