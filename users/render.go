@@ -46,8 +46,8 @@ func renderFriendListPage(w http.ResponseWriter, r *http.Request, friend *userAd
 }
 func renderGroupPage(w http.ResponseWriter, r *http.Request, obj *group)  {
 	page := new(pageInfo);
-	page.Name = "Create Friend List";
-	page.Header = "Create Friend page";
+	page.Name = "Group";
+	page.Header = "Group page";
 	render.Execute(w, "header", page);
 	render.Execute(w, "group", obj);
 	render.Execute(w, "footer", nil);

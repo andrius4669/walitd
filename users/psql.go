@@ -1,6 +1,6 @@
 package users
 import (
-//"fmt"
+"fmt"
 //	"encoding/json"
 	"database/sql"
 //	"strconv"
@@ -45,7 +45,7 @@ func queryGetUser(db *sql.DB, u *user, id string) error{
 	if (u.Role == 3) {
 		u.RoleN = "Super Admin"
 	}
-	panicErr(err);
+//	panicErr(err);
 	return err;
 }
 func queryGetUserByUsername(db *sql.DB,u *user, username string) error {
@@ -107,9 +107,20 @@ func queryGetMessages(db *sql.DB, m *messages, id int){
 		m.Recieved = append(m.Recieved, t);
 	}
 }
-func queryGetGroup(db *sql.DB, g *group, id int){
-	err := db.QueryRow("Select name, description, created, updated from groups where id=$1 and grouptype=1;", id).Scan(&g.Name, &g.Description, &g.Created, &g.Updated);
-	panicErr(err);
+func queryGetGroup(db *sql.DB, g *group, id int) error{
+	var desc sql.NullString;
+	g.GroupId = id;
+	err := db.QueryRow("Select name, description, created, updated from groups where groupid=$1 and grouptype=1;", id).Scan(&g.Name, &desc, &g.Created, &g.Updated);
+	if (desc.Valid){
+		g.Description = desc.String;
+	}
+	if err != nil {
+		panicErr(err)
+		return err;
+	}
+	pp := db.QueryRow("select users.userid, users.username from usergroup left join users on users.userid=usergroup.userid where level=1 and groupid=$1", id).Scan(&g.Owner, &g.OwnerName);
+	panicErr(err)
+	return pp;
 }
 func queryGetGroupByName(db *sql.DB, g *group, id string){
 	err := db.QueryRow("Select name, description, created, updated from groups where name=$1 and grouptype=1;", id).Scan(&g.Name, &g.Description, &g.Created, &g.Updated);
@@ -140,6 +151,7 @@ func queryAddUser(db *sql.DB, u *userForm){
 	panicErr(err);
 }
 func queryUpdateUser(db *sql.DB, u *user){
+	fmt.Printf("%v \n", u);
 	_, err := db.Query("update users set email=$1, firstname=$2, lastname=$3, country=$4, telephone=$5, city=$6, description=$8, updated=now() where userid=$9", u.Email, u.FirstName, u.SecondName, u.Country, u.Telephone, u.City, u.Description, u.Userid);
 	panicErr(err);
 	if (u.Picture != ""){
@@ -173,6 +185,7 @@ func queryGetGroupList(db *sql.DB,g *groupsPage, userid int) {
 		rows.Scan(&t);
 		gg := new(group);
 		queryGetGroup(db, gg, t);
+
 		g.GroupsInfo = append(g.GroupsInfo, *gg);
 	}
 }

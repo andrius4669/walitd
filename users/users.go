@@ -121,10 +121,14 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 						http.Redirect( w, r , "/users/", http.StatusFound);
 						return;
 					}
-					if (true){
-						renderGroupPage(w, r, getGroupPage(id));
+					gg, ee :=  getGroupPage(id);
+					if ee != nil{
+						http.Redirect( w, r , "/users/", http.StatusFound);
+					}
+					if (true){ //todo check if group owner
+						renderGroupPage(w, r,gg);
 					} else{
-						renderGroupEditPage(w, r, getGroupPage(id));
+						renderGroupEditPage(w, r, gg);
 					}
 
 				} else {
@@ -250,7 +254,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				obj.Name = form["name"][0];
 				obj.Description = form["desc"][0];
 				var a bool;
-				obj, a = createGroup(obj);
+				a = createGroup(obj);
 				if a{
 					http.Redirect( w, r , "/users/groups/", http.StatusFound);
 					return
@@ -297,6 +301,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					if (ee != nil){
 						http.Redirect( w, r , "/users/", http.StatusFound);
 					}
+//					fmt.Printf("%v \n", arr);
+//					fmt.Printf("%v \n", form);
+
 					arr.Email =form["email"][0];
 					arr.FirstName =form["firstname"][0];
 					arr.SecondName =form["secondname"][0];
@@ -307,8 +314,11 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 //					arr.Birthday =time.Now().Format(form["birth"][0]);
 					arr.Picture =form["pic"][0];
 					arr.Description =form["desc"][0];
+//					fmt.Printf("%v \n", arr);
 					arr = validateProfileForm(arr);
-					arr = editProfile(arr);
+					if (arr.Err > 0){
+						editProfile(arr);
+					}
 					renderEditProfilePage(w, r, arr);
 					return;
 				} else {

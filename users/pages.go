@@ -76,6 +76,8 @@ type group struct {
 	Updated time.Time;
 	Description string;
 	ErrCnt int;
+	Owner int;
+	OwnerName string;
 }
 
 func getGroup(id int) *group  {
@@ -199,9 +201,12 @@ func getFriendList() *friendListPage {
 	//TODO: return friend list
 	return new(friendListPage);
 }
-func getGroupPage(id int) *group{
-	//TODO: return group info
-	return new(group);
+func getGroupPage(id int) (*group, error){
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	gg := new(group);
+	err := queryGetGroup(db, gg, id);
+	return gg, err;
 }
 func joinToGroup(gr *userAddForm) *userAddForm{
 	//TODO: join group
@@ -223,12 +228,12 @@ func register(r *userForm) {
 func createFriendListF()  {
 	//TODO create friend list
 }
-func createGroup(g *group) (*group, bool){
+func createGroup(g *group) ( bool){
 	//TODO check username and create group
 	if (true){
-		return g, true;
+		return true;
 	} else{
-		return g, false;
+		return false;
 	}
 }
 func addFriend(o *userAddForm) *userAddForm{
@@ -239,9 +244,10 @@ func removeFriend(o *userAddForm) *userAddForm{
 	//TODO remove friend
 	return o;
 }
-func editProfile(obj *user) *user{
-	//TODO edit profile
-	return obj;
+func editProfile(obj *user){
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	queryUpdateUser(db, obj);
 }
 func editGroup(obj *group, id int) *group{
 	//TODO edit group logic
