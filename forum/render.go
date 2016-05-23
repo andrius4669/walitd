@@ -5,14 +5,18 @@ import (
 	"fmt"
 	"net/http"
 	//"time"
+	"../dbacc"
 )
 
 // TODO(andrius)
 //func Execute(w io.Writer, name string, data interface{})
 func renderBoardList(w http.ResponseWriter, r *http.Request) {
 	page := new(frontPage)
-	page.Boards = append(page.Boards, boardInfo{Board: "test", Topic: "testinfo", Description: "test desc"})
-	page.Boards = append(page.Boards, boardInfo{Board: "test2", Topic: "testinfo2", Description: "test desc2"})
+	db := dbacc.OpenSQL()
+	defer db.Close()
+	queryBoardList(db, page)
+	//page.Boards = append(page.Boards, boardInfo{Board: "test", Topic: "testinfo", Description: "test desc"})
+	//page.Boards = append(page.Boards, boardInfo{Board: "test2", Topic: "testinfo2", Description: "test desc2"})
 	render.Execute(w, "boards", page)
 }
 

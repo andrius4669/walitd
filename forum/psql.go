@@ -12,7 +12,7 @@ import (
 )
 
 func queryBoardList(db *sql.DB, p *frontPage) {
-	rows, err := db.Query("SELECT bname, topic, description FROM boards")
+	rows, err := db.Query("SELECT bname, topic, description FROM forum.boards")
 	panicErr(err)
 
 	for rows.Next() {
@@ -30,7 +30,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 
 	var attributesjson []byte
 	var bid uint32
-	err := db.QueryRow("SELECT boardid, topic, description, attributes FROM boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
+	err := db.QueryRow("SELECT boardid, topic, description, attributes FROM forum.boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
 	if err == sql.ErrNoRows {
 		return false
 	}
@@ -64,7 +64,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		return false
 	}
 
-	rows, err := db.Query("SELECT threadid, bump FROM threads WHERE boardid=$1 ORDER BY bump DESC LIMIT $2 OFFSET $3", bid, tpp, (page - 1) * tpp)
+	rows, err := db.Query("SELECT threadid, bump FROM forum.threads WHERE boardid=$1 ORDER BY bump DESC LIMIT $2 OFFSET $3", bid, tpp, (page - 1) * tpp)
 	panicErr(err)
 	for rows.Next() {
 		var t threadInfo
@@ -78,7 +78,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	}
 
 	var allthreads uint32
-	err = db.QueryRow("SELECT COUNT(*) FROM threads WHERE boardid=$1", bid).Scan(&allthreads)
+	err = db.QueryRow("SELECT COUNT(*) FROM forum.threads WHERE boardid=$1", bid).Scan(&allthreads)
 	panicErr(err)
 
 	var cp uint32
@@ -98,13 +98,13 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	for i := range p.Threads {
 		// get stuff from OP
 		var uid sql.NullInt64
-		err = db.QueryRow("SELECT title, userid, pname, trip, email FROM posts WHERE boardid=$1 AND postid=$2", bid, p.Threads[i].ID).Scan(&p.Threads[i].Title, &uid, &p.Threads[i].OP.Name, &p.Threads[i].OP.Trip, &p.Threads[i].OP.Email)
+		err = db.QueryRow("SELECT title, userid, pname, trip, email FROM forum.posts WHERE boardid=$1 AND postid=$2", bid, p.Threads[i].ID).Scan(&p.Threads[i].Title, &uid, &p.Threads[i].OP.Name, &p.Threads[i].OP.Trip, &p.Threads[i].OP.Email)
 		panicErr(err)
 		if uid.Valid {
 			p.Threads[i].OP.User = users.GetUserInfo(uint32(uid.Int64))
 		}
 		// get info about last post
-		err = db.QueryRow("SELECT postid, userid, pname, trip, email, postdate FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", bid, p.Threads[i].ID).Scan(&p.Threads[i].LastID, &uid, &p.Threads[i].Last.Name, &p.Threads[i].Last.Trip, &p.Threads[i].Last.Email, &p.Threads[i].LastDate)
+		err = db.QueryRow("SELECT postid, userid, pname, trip, email, postdate FROM forum.posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate DESC LIMIT 1", bid, p.Threads[i].ID).Scan(&p.Threads[i].LastID, &uid, &p.Threads[i].Last.Name, &p.Threads[i].Last.Trip, &p.Threads[i].Last.Email, &p.Threads[i].LastDate)
 		panicErr(err)
 		if uid.Valid {
 			p.Threads[i].Last.User = users.GetUserInfo(uint32(uid.Int64))
@@ -137,20 +137,20 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 
 	var attributesjson []byte
 	var bid uint32
-	err = db.QueryRow("SELECT boardid, topic, description, attributes FROM boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
+	err = db.QueryRow("SELECT boardid, topic, description, attributes FROM forum.boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
 	if err == sql.ErrNoRows {
 		return false
 	}
 	panicErr(err)
 	p.Board = board
 
-	err = db.QueryRow("SELECT threadid FROM threads WHERE boardid=$1 AND threadid=$2", bid, tid).Scan(&p.ID)
+	err = db.QueryRow("SELECT threadid FROM forum.threads WHERE boardid=$1 AND threadid=$2", bid, tid).Scan(&p.ID)
 	if err == sql.ErrNoRows {
 		return false
 	}
 	panicErr(err)
 
-	rows, err := db.Query("SELECT postid, userid, pname, trip, email, title, postdate, message FROM posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate ASC", bid, tid)
+	rows, err := db.Query("SELECT postid, userid, pname, trip, email, title, postdate, message FROM forum.posts WHERE boardid=$1 AND threadid=$2 ORDER BY postdate ASC", bid, tid)
 	panicErr(err)
 	for rows.Next() {
 		var pc postContent
@@ -186,7 +186,7 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 
 func sqlGetBoard(db *sql.DB, board string) (uint32, bool) {
 	var bid uint32
-	err := db.QueryRow("SELECT boardid FROM boards WHERE bname=$1", board).Scan(&bid)
+	err := db.QueryRow("SELECT boardid FROM forum.boards WHERE bname=$1", board).Scan(&bid)
 	if err == sql.ErrNoRows {
 		return 0, false
 	}
@@ -205,7 +205,7 @@ func sqlValidatePost(db *sql.DB, board string, post uint32, thread *uint32) bool
 		return false
 	}
 	var tid sql.NullInt64
-	err := db.QueryRow("SELECT threadid FROM posts WHERE boardid=$1 AND postid=$2", bid, post).Scan(&tid)
+	err := db.QueryRow("SELECT threadid FROM forum.posts WHERE boardid=$1 AND postid=$2", bid, post).Scan(&tid)
 	if err == sql.ErrNoRows {
 		return false
 	}
