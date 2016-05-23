@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type  UserSessionInfo struct {
+type UserSessionInfo struct {
 	Uid  uint32
 	Role uint32
 }
@@ -25,12 +25,12 @@ func MakeUserSession(w http.ResponseWriter, r *http.Request, si *UserSessionInfo
 	s.val["role"] = si.Role
 	exp := time.Now().Add(time.Duration(manager.maxlifetime) * time.Second)
 	sc := http.Cookie{
-		Name: manager.cookieName,
-		Value: url.QueryEscape(sid),
-		Path: "/",
+		Name:     manager.cookieName,
+		Value:    url.QueryEscape(sid),
+		Path:     "/",
 		HttpOnly: true,
-		Expires: exp,
-		MaxAge: int(manager.maxlifetime),
+		Expires:  exp,
+		MaxAge:   int(manager.maxlifetime),
 	}
 	http.SetCookie(w, &sc)
 	return s
@@ -49,12 +49,12 @@ func GetUserSession(w http.ResponseWriter, r *http.Request) *SessionStore {
 	}
 	exp := time.Now().Add(time.Duration(manager.maxlifetime) * time.Second)
 	sc := http.Cookie{
-		Name: manager.cookieName,
-		Value: url.QueryEscape(sid),
-		Path: "/",
+		Name:     manager.cookieName,
+		Value:    url.QueryEscape(sid),
+		Path:     "/",
 		HttpOnly: true,
-		Expires: exp,
-		MaxAge: int(manager.maxlifetime),
+		Expires:  exp,
+		MaxAge:   int(manager.maxlifetime),
 	}
 	http.SetCookie(w, &sc)
 	return s
@@ -70,17 +70,17 @@ func pruneUserSession(w http.ResponseWriter, r *http.Request) {
 	manager.SessionPrune(sid)
 	exp := time.Now()
 	sc := http.Cookie{
-		Name: manager.cookieName,
-		Path: "/",
+		Name:     manager.cookieName,
+		Path:     "/",
 		HttpOnly: true,
-		Expires: exp,
-		MaxAge: -1,
+		Expires:  exp,
+		MaxAge:   -1,
 	}
 	http.SetCookie(w, &sc)
 }
 
 // extracts userinfo from session
 func FillUserInfo(s *SessionStore, usi *UserSessionInfo) {
-	usi.Uid  = s.val["uid"].(uint32)
+	usi.Uid = s.val["uid"].(uint32)
 	usi.Role = s.val["uid"].(uint32)
 }

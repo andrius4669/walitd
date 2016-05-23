@@ -2,9 +2,9 @@ package forum
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
 	"strconv"
-	"database/sql"
 )
 
 const (

@@ -1,12 +1,12 @@
 package sessions
 
 import (
-	"time"
-	"sync"
 	"container/list"
-	"io"
 	"crypto/rand"
 	"encoding/base64"
+	"io"
+	"sync"
+	"time"
 )
 
 // stores sessions

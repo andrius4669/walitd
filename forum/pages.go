@@ -98,5 +98,5 @@ type boardPage struct {
 type threadPage struct {
 	boardInfo
 	threadContent
-	Mod    bool
+	Mod bool
 }

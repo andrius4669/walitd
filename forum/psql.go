@@ -4,11 +4,11 @@ package forum
 // currently only github.com/lib/pq lib usage
 
 import (
-	"fmt"
-	"encoding/json"
-	"database/sql"
-	"strconv"
 	"../users"
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"strconv"
 )
 
 func queryBoardList(db *sql.DB, p *frontPage) {
@@ -39,10 +39,10 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	p.Board = board
 
 	type attributes struct {
-		PageLimit *uint32
+		PageLimit      *uint32
 		ThreadsPerPage *uint32
 		AllowNewThread *bool
-		AllowFiles *bool
+		AllowFiles     *bool
 	}
 	var attr attributes
 	json.Unmarshal(attributesjson, &attr) // fail shouldn't happen
@@ -66,7 +66,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		return false
 	}
 
-	rows, err := db.Query("SELECT threadid, bump FROM forum.threads WHERE boardid=$1 ORDER BY bump DESC LIMIT $2 OFFSET $3", bid, tpp, (page - 1) * tpp)
+	rows, err := db.Query("SELECT threadid, bump FROM forum.threads WHERE boardid=$1 ORDER BY bump DESC LIMIT $2 OFFSET $3", bid, tpp, (page-1)*tpp)
 	panicErr(err)
 	for rows.Next() {
 		var t threadInfo
@@ -86,7 +86,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 
 	var cp uint32
 	p.Pages = append(p.Pages, true)
-	for cp = 1; cp < (allthreads + tpp - 1) / tpp; cp++ {
+	for cp = 1; cp < (allthreads+tpp-1)/tpp; cp++ {
 		p.Pages = append(p.Pages, true)
 	}
 	if pagelimit != 0 {

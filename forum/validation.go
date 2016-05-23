@@ -1,9 +1,9 @@
 package forum
 
 func panicErr(err error) {
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 }
 
 func validBoardName(board string) bool {

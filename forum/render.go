@@ -31,24 +31,24 @@ func renderBoardModPage(w http.ResponseWriter, r *http.Request, board string) {
 func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid uint32, mod bool) {
 	page := new(boardPage)
 	/*
-	page.Mod = mod
-	page.Board = board
-	page.Topic = "test topic"
-	page.Description = "some description describing this test board"
-	for i := uint32(1); i <= 5; i++ {
-		var t threadInfo
-		t.ID = i
-		t.Title = "test title"
-		t.Replies = 100 + i
-		page.Threads = append(page.Threads, t)
-	}
-	for i := 1; i <= 5; i++ {
-		page.Pages = append(page.Pages, true)
-	}
-	for i := 1; i <= 5; i++ {
-		page.Pages = append(page.Pages, false)
-	}
-	page.CurrentPage = pid
+		page.Mod = mod
+		page.Board = board
+		page.Topic = "test topic"
+		page.Description = "some description describing this test board"
+		for i := uint32(1); i <= 5; i++ {
+			var t threadInfo
+			t.ID = i
+			t.Title = "test title"
+			t.Replies = 100 + i
+			page.Threads = append(page.Threads, t)
+		}
+		for i := 1; i <= 5; i++ {
+			page.Pages = append(page.Pages, true)
+		}
+		for i := 1; i <= 5; i++ {
+			page.Pages = append(page.Pages, false)
+		}
+		page.CurrentPage = pid
 	*/
 	db := dbacc.OpenSQL()
 	defer db.Close()
@@ -63,43 +63,43 @@ func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid u
 func renderThread(w http.ResponseWriter, r *http.Request, board string, thread string, mod bool) {
 	page := new(threadPage)
 	/*
-	page.Mod = mod
-	page.Board = board
-	page.Topic = "test topic"
-	page.Description = "some description describing this test board"
-	page.ID = 123
-	var p postContent
-	p.PostID = 123
-	p.Title = "lol this is title"
-	p.Message = "lol this is message"
-	p.FMessage = "lol this is message"
-	for i := 0; i < 30; i++ {
-		p.References = append(p.References, 124 + uint32(i))
-	}
-	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
-	page.OP = p
-	p.PostID = 124
-	p.UserIdent.Name = "wandalizorours"
-	p.UserIdent.Trip = "!aksa6df54a1"
-	p.References = nil
-	p.References = append(p.References, 125)
-	p.Files = nil
-	page.Replies = append(page.Replies, p)
-	p.PostID = 125
-	p.UserIdent.Name = "weep"
-	p.UserIdent.Email = "sage"
-	p.References = nil
-	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
-	p.Files = append(p.Files, fileContent{Name: "/deleted", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
-	p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
-	page.Replies = append(page.Replies, p)
-	p.PostID = 126
-	p.Title = ""
-	p.UserIdent.Name = ""
-	page.Replies = append(page.Replies, p)
-	p.PostID = 127
-	p.UserIdent.Email = ""
-	page.Replies = append(page.Replies, p)
+		page.Mod = mod
+		page.Board = board
+		page.Topic = "test topic"
+		page.Description = "some description describing this test board"
+		page.ID = 123
+		var p postContent
+		p.PostID = 123
+		p.Title = "lol this is title"
+		p.Message = "lol this is message"
+		p.FMessage = "lol this is message"
+		for i := 0; i < 30; i++ {
+			p.References = append(p.References, 124 + uint32(i))
+		}
+		p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
+		page.OP = p
+		p.PostID = 124
+		p.UserIdent.Name = "wandalizorours"
+		p.UserIdent.Trip = "!aksa6df54a1"
+		p.References = nil
+		p.References = append(p.References, 125)
+		p.Files = nil
+		page.Replies = append(page.Replies, p)
+		p.PostID = 125
+		p.UserIdent.Name = "weep"
+		p.UserIdent.Email = "sage"
+		p.References = nil
+		p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
+		p.Files = append(p.Files, fileContent{Name: "/deleted", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
+		p.Files = append(p.Files, fileContent{Name: "123test.png", Original: "test original.png", Thumb: "/forum/"+board+"/static/testthumb.jpg"})
+		page.Replies = append(page.Replies, p)
+		p.PostID = 126
+		p.Title = ""
+		p.UserIdent.Name = ""
+		page.Replies = append(page.Replies, p)
+		p.PostID = 127
+		p.UserIdent.Email = ""
+		page.Replies = append(page.Replies, p)
 	*/
 	db := dbacc.OpenSQL()
 	defer db.Close()

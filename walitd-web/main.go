@@ -7,12 +7,12 @@ import (
 	"os"
 	str "strings"
 	//"../hostutil"
+	"../admin"
 	"../forum"
 	"../main_rdr"
 	"../news"
 	"../poll"
 	"../users"
-	"../admin"
 )
 
 var configFile = "config.ini"
