@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>New board</title>
+</head>
+<body>
+<form action="/forum/newboard" method="post">
+<table>
+<tr>
+<th>Name</th>
+<td><input name="board" type="text" placeholder="boardname" /></td>
+</tr>
+<tr>
+<th>Topic</th>
+<td><input name="topic" type="text" placeholder="write topic here" /></td>
+</tr>
+<tr>
+<th>Description</th>
+<td><input name="desc" type="text" placeholder="description" /></td>
+</tr>
+<tr>
+<th>Page limit</th>
+<td><input name="pagelimit" type="number" placeholder="0" /></td>
+</tr>
+<tr>
+<th>Threads per page</th>
+<td><input name="threadsperpage" type="number" placeholder="10" /></td>
+</tr>
+<tr>
+<th>Allow creating new threads</th>
+<td><input name="allownewthread" type="checkbox" value="yes" checked="checked" /></td>
+</tr>
+<tr>
+<th>Allow uploading files</th>
+<td><input name="allowfiles" type="checkbox" value="yes" checked="checked" /></td>
+</tr>
+<tr>
+<td></td>
+<td><input name="submit" type="submit" /></td>
+</table>
+</form>
+</body>
+</html>

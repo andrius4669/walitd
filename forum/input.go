@@ -19,6 +19,7 @@ type postMessage struct {
 type postData struct {
 	postMessage
 	ThreadID uint32
+	bump     bool
 }
 
 // when making new board
