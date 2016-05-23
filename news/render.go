@@ -5,13 +5,18 @@ import (
 	//"fmt"
 	"net/http"
 	//"time"
+	"../dbacc"
 )
 
 //func Execute(w io.Writer, name string, data interface{})
 func renderArticlesList(w http.ResponseWriter, r *http.Request) {
 	page := new(ArticlesFrontPage)
-	page.Boards = append(page.Boards, articlesList{Author: "test", Category: "testinfo", Description: "test desc", FullArticleLink: "TESTY"})
-	page.Boards = append(page.Boards, articlesList{Author: "test2", Category: "testinfo2", Description: "test desc2", FullArticleLink: "TESTY2"})
+	//page.Boards = append(page.Boards, articlesList{Author: "test", Category: "testinfo", Description: "test desc", FullArticleLink: "TESTY"})
+	//page.Boards = append(page.Boards, articlesList{Author: "test2", Category: "testinfo2", Description: "test desc2", FullArticleLink: "TESTY2"})
+
+	db := dbacc.OpenSQL()
+	defer db.Close()
+	queryArticlesList(db, page)
 	render.Execute(w, "list", page)
 }
 
