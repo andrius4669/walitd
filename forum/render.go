@@ -30,6 +30,7 @@ func renderBoardModPage(w http.ResponseWriter, r *http.Request, board string) {
 
 func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid uint32, mod bool) {
 	page := new(boardPage)
+	/*
 	page.Mod = mod
 	page.Board = board
 	page.Topic = "test topic"
@@ -48,6 +49,10 @@ func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid u
 		page.Pages = append(page.Pages, false)
 	}
 	page.CurrentPage = pid
+	*/
+	db := dbacc.OpenSQL()
+	defer db.Close()
+	queryBoard(db, page, board, pid, mod)
 	render.Execute(w, "threads", page)
 	//http.Error(w, fmt.Sprintf("501 board %s page %d (mod: %t) not implemented", board, page, mod), 501)
 }

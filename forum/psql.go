@@ -111,6 +111,8 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 		}
 	}
 
+	p.Mod = mod
+
 	return true
 }
 
@@ -180,8 +182,7 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 		formatPost(p, &p.Replies[i], db)
 	}
 
-	// TODO(andrius)
-	return false
+	return true
 }
 
 func sqlGetBoard(db *sql.DB, board string) (uint32, bool) {
