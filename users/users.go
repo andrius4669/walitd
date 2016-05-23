@@ -1,11 +1,12 @@
 package users
 
 import (
-//	"fmt"
+	"fmt"
 	"../render"
 	"net/http"
 	"strconv"
 	str "strings"
+	ss "../sessions"
 //	"time"
 )
 
@@ -43,11 +44,15 @@ func LoadTemplates() {
 func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 
 //	fmt.Println(r.Form) // print information on server side.
-
 //	fmt.Printf("%v \n", r);
 //	fmt.Printf("%v \n", r.Method);
+
+	//get session info -- also known as using magic
+	ses := ss.GetUserSession(w, r);
+	fmt.Printf("%v \n", ses);
 	rpath := r.URL.Path[pathi+1:]
 	if r.Method == "GET" || r.Method == "HEAD" {
+
 		if (true){ //TODO: if not logged redirect to login page
 			if rpath == "" {
 				groups := getGroupsPage()
