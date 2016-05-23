@@ -7,8 +7,9 @@ import (
 	"../users"
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	"strconv"
+	"time"
 )
 
 func queryBoardList(db *sql.DB, p *frontPage) {
@@ -32,7 +33,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	var bid uint32
 	err := db.QueryRow("SELECT boardid, topic, description, attributes FROM forum.boards WHERE bname=$1", board).Scan(&bid, &p.Topic, &p.Description, &attributesjson)
 	if err == sql.ErrNoRows {
-		fmt.Printf("fail @ initial select: no rows\n")
+		//fmt.Printf("fail @ initial select: no rows\n")
 		return false
 	}
 	panicErr(err)
@@ -62,7 +63,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	}
 
 	if page == 0 || (pagelimit != 0 && page > pagelimit) {
-		fmt.Printf("fail @ page check\n")
+		//fmt.Printf("fail @ page check\n")
 		return false
 	}
 
@@ -76,7 +77,7 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 
 	// if no threads and no limit, only show existing threads
 	if len(p.Threads) == 0 && page != 1 && pagelimit == 0 {
-		fmt.Printf("fail @ threads num check: len=%d page=%d pl=%d\n", len(p.Threads), page, pagelimit)
+		//fmt.Printf("fail @ threads num check: len=%d page=%d pl=%d\n", len(p.Threads), page, pagelimit)
 		return false
 	}
 
@@ -288,8 +289,50 @@ func sqlStoreBoard(db *sql.DB, d *boardData) bool {
 	attr.AllowNewThread = d.AllowNewThread
 	attr.AllowFiles = d.AllowFiles
 	encattr, _ := json.Marshal(attr)
-	fmt.Printf("encattr=%s\n", encattr)
+	//fmt.Printf("encattr=%s\n", encattr)
 	_, err = stmt.Exec(d.Board, d.Topic, d.Description, encattr) // TODO
 	panicErr(err)
+	return true
+}
+
+func sqlStoreThread(db *sql.DB, d *postMessage) bool {
+	// allocate new id
+	var tid uint32
+	err := db.QueryRow("UPDATE forum.boards SET lastid = lastid+1 WHERE boardid=$1 RETURNING lastid", d.boardid).Scan(&tid)
+	panicErr(err)
+	// insert into threads list
+	stmt, err := db.Prepare("INSERT INTO forum.threads (boardid, threadid, bump) VALUES ($1, $2, $3)")
+	panicErr(err)
+	nowtime := time.Now()
+	_, err = stmt.Exec(d.boardid, tid, nowtime)
+	panicErr(err)
+	// insert into posts list
+	stmt, err = db.Prepare("INSERT INTO forum.posts (boardid, postid, threadid, userid, pname, trip, email, title, postdate, message) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)")
+	panicErr(err)
+	_, err = stmt.Exec(d.boardid, tid, tid, d.UserID, d.PName, d.Trip, d.Email, d.Title, nowtime, d.Message)
+	panicErr(err)
+	// done
+	return true
+}
+
+func sqlStorePost(db *sql.DB, d *postData) bool {
+	// allocate new id
+	var pid uint32
+	err := db.QueryRow("UPDATE forum.boards SET lastid = lastid+1 WHERE boardid=$1 RETURNING lastid", d.boardid).Scan(&pid)
+	panicErr(err)
+	nowtime := time.Now()
+	if d.bump {
+		// bump thread
+		stmt, err := db.Prepare("UPDATE forum.threads SET bump=$1 WHERE boardid=$2 AND threadid=$3")
+		panicErr(err)
+		_, err = stmt.Exec(nowtime, d.boardid, d.ThreadID)
+		panicErr(err)
+	}
+	// insert into posts list
+	stmt, err := db.Prepare("INSERT INTO forum.posts (boardid, postid, threadid, userid, pname, trip, email, title, postdate, message) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)")
+	panicErr(err)
+	_, err = stmt.Exec(d.boardid, pid, d.ThreadID, d.UserID, d.PName, d.Trip, d.Email, d.Title, nowtime, d.Message)
+	panicErr(err)
+	// done
 	return true
 }
