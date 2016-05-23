@@ -122,6 +122,19 @@ func (m *Manager) SessionUpdateOrNew(sid string) *SessionStore {
 	return ns
 }
 
+func (m *Manager) SessionPrune(sid string) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+
+	m.checkGC()
+
+	s, ok := m.sessions[sid]
+	if ok {
+		delete(m.sessions, sid)
+		m.list.Remove(s)
+	}
+}
+
 var manager = &Manager{}
 
 func init() {

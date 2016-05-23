@@ -197,6 +197,12 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 }
 
 func sqlGetBoard(db *sql.DB, board string) (uint32, bool) {
+	if !validBoardName(board) {
+		return 0, false
+	}
+	if reservedBoardName(board) {
+		return 0, false
+	}
 	var bid uint32
 	err := db.QueryRow("SELECT boardid FROM forum.boards WHERE bname=$1", board).Scan(&bid)
 	if err == sql.ErrNoRows {
@@ -228,4 +234,49 @@ func sqlValidatePost(db *sql.DB, board string, post uint32, thread *uint32) bool
 		*thread = post
 	}
 	return true
+}
+
+func validateInputBoard(db *sql.DB, d *boardData) bool {
+	if !validBoardName(d.Board) {
+		return false
+	}
+	if reservedBoardName(d.Board) {
+		return false
+	}
+	if d.Topic == "" {
+		return false
+	}
+	return true
+}
+
+func validateInputThread(db *sql.DB, d *postMessage) bool {
+	bid, ok := sqlGetBoard(db, d.Board)
+	if !ok {
+		return false
+	}
+	d.boardid = bid
+	return true
+}
+
+func validateInputPost(db *sql.DB, d *postData) bool {
+	bid, ok := sqlGetBoard(db, d.Board)
+	if !ok {
+		return false
+	}
+	d.boardid = bid
+	var tid uint32
+	err := db.QueryRow("SELECT threadid FROM forum.threads WHERE boardid=$1 AND threadid=$2", bid, d.ThreadID).Scan(&tid)
+	if err == sql.ErrNoRows {
+		return false
+	}
+	panicErr(err)
+	return true
+}
+
+func sqlStoreBoard(db *sql.DB, d *boardData) bool {
+	stmt, err := db.Prepare("INSERT INTO boards (bname, topic, description, attributes) VALUES ($1, $2, $3, $4)")
+	panicErr(err)
+	_, err = stmt.Exec(d.Board, d.Topic, d.Description, "{}") // TODO
+	panicErr(err)
+	return false
 }

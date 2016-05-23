@@ -2,6 +2,7 @@ package sessions
 
 import (
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -23,7 +24,14 @@ func MakeUserSession(w http.ResponseWriter, r *http.Request, si *UserSessionInfo
 	s.val["uid"] = si.Uid
 	s.val["role"] = si.Role
 	exp := time.Now().Add(time.Duration(manager.maxlifetime) * time.Second)
-	sc := http.Cookie{Name: manager.cookieName, Value: sid, Expires: exp}
+	sc := http.Cookie{
+		Name: manager.cookieName,
+		Value: url.QueryEscape(sid),
+		Path: "/",
+		HttpOnly: true,
+		Expires: exp,
+		MaxAge: int(manager.maxlifetime),
+	}
 	http.SetCookie(w, &sc)
 	return s
 }
@@ -40,9 +48,35 @@ func GetUserSession(w http.ResponseWriter, r *http.Request) *SessionStore {
 		return nil
 	}
 	exp := time.Now().Add(time.Duration(manager.maxlifetime) * time.Second)
-	sc := http.Cookie{Name: manager.cookieName, Value: sid, Expires: exp}
+	sc := http.Cookie{
+		Name: manager.cookieName,
+		Value: url.QueryEscape(sid),
+		Path: "/",
+		HttpOnly: true,
+		Expires: exp,
+		MaxAge: int(manager.maxlifetime),
+	}
 	http.SetCookie(w, &sc)
 	return s
+}
+
+// for logging out
+func pruneUserSession(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := r.Cookie(manager.cookieName)
+	if cookie == nil || cookie.Value == "" {
+		return // no session
+	}
+	sid := cookie.Value
+	manager.SessionPrune(sid)
+	exp := time.Now()
+	sc := http.Cookie{
+		Name: manager.cookieName,
+		Path: "/",
+		HttpOnly: true,
+		Expires: exp,
+		MaxAge: -1,
+	}
+	http.SetCookie(w, &sc)
 }
 
 // extracts userinfo from session
