@@ -159,8 +159,8 @@ func queryUpdateUser(db *sql.DB, u *user){
 		panicErr(err);
 	}
 }
-func queryUpdateGroup(db *sql.DB, g *group)  {
-	_, err := db.Query("update groups set description=$2, updated=now() where groupid=$1", g.GroupId, g.Description);
+func queryUpdateGroup(db *sql.DB, g *group, id int)  {
+	_, err := db.Query("update groups set description=$2, updated=now() where groupid=$1", id, g.Description);
 	panicErr(err);
 }
 func queryGetFriendList(db *sql.DB, f *friendListPage, userid int){

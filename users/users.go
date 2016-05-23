@@ -125,7 +125,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					if ee != nil{
 						http.Redirect( w, r , "/users/", http.StatusFound);
 					}
-					if (true){ //todo check if group owner
+					if (false){ //todo check if group owner
 						renderGroupPage(w, r,gg);
 					} else{
 						renderGroupEditPage(w, r, gg);
@@ -336,8 +336,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					}
 					obj := new(group);
 					obj.Description = form["desc"][0];
-					obj = editGroup(obj, id);
-					renderGroupPage(w, r, obj);
+					editGroup(obj, id);
+					http.Redirect(w, r, r.URL.Path, http.StatusFound)
 				} else {
 					http.Redirect( w, r , "/users/", http.StatusFound);
 				}

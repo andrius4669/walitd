@@ -249,7 +249,8 @@ func editProfile(obj *user){
 	defer db.Close();
 	queryUpdateUser(db, obj);
 }
-func editGroup(obj *group, id int) *group{
-	//TODO edit group logic
-	return obj;
+func editGroup(obj *group, id int){
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	queryUpdateGroup(db, obj, id);
 }
