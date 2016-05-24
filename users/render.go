@@ -98,7 +98,7 @@ func renderGroupEditPage(w http.ResponseWriter, r *http.Request,obj *group)  {
 	render.Execute(w, "groupEdit", obj);
 	render.Execute(w, "footer", nil);
 }
-func renderGroupsPage(w http.ResponseWriter, r *http.Request, grp *groupsPage, obj *userAddForm)  {
+func renderGroupsPage(w http.ResponseWriter, r *http.Request, grp *groupsPage, obj *userAddForm, sug *suggests)  {
 	page := new(pageInfo);
 	page.Name = "Groups";
 	page.Header = "Groups page";
@@ -109,14 +109,20 @@ func renderGroupsPage(w http.ResponseWriter, r *http.Request, grp *groupsPage, o
 	}else{
 		render.Execute(w, "notmenu", nil);
 	}
+	render.Execute(w, "text", "<h3>You are in these groups:</h3>");
 	for i := 0; i < len(grp.GroupsInfo); i++ {
 		grp.GroupsInfo[i].Grr = "grr";
 		render.Execute(w, "group", grp.GroupsInfo[i])
 	}
+	render.Execute(w, "text", "<h3>We are suggesting to join these groups:</h3>");
+	for i := 0; i < len(sug.Suggest); i++ {
+		sug.Suggest[i].Grr = "grr";
+		render.Execute(w, "group", sug.Suggest[i])
+	}
+	render.Execute(w, "groups", obj);
 	for i := 0; i < len(grp.News); i++ {
 		render.Execute(w, "sharedNews", grp.News[i])
 	}
-	render.Execute(w, "groups", obj);
 	render.Execute(w, "footer", nil);
 }
 func renderMessagesPage(w http.ResponseWriter, r *http.Request, obj *messages, mm *messageForm)  {
@@ -139,7 +145,6 @@ func renderProfilePage(w http.ResponseWriter, r *http.Request, obj *user)  {
 	page.Name = "Profile";
 	page.Header = "Profile page";
 	render.Execute(w, "header", page);
-	render.Execute(w, "menu", nil)
 	ses := ss.GetUserSession(w, r);
 	if ses != nil {
 		render.Execute(w, "menu", nil);

@@ -196,7 +196,6 @@ func getGroupsPage(id int) *groupsPage{
 	defer db.Close();
 	 g := new(groupsPage)
 	queryGetGroupList(db, g, id);
-	//TODO: return groups page info
 	return g;
 }
 func getMessagePage() *messages{
@@ -214,9 +213,22 @@ func getGroupPage(id int) (*group, error){
 	err := queryGetGroup(db, gg, id);
 	return gg, err;
 }
-func joinToGroup(gr *userAddForm) *userAddForm{
-	//TODO: join group
-	return gr;
+func joinToGroup(gr *userAddForm, id int) *userAddForm{
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	gg := new(group);
+	ee := queryGetGroupByName(db, gg, gr.Username);
+	if (ee != nil){
+		gr.UsernameErr = "<p class='error'> There is no such group </p>"
+		return gr;
+	}
+	err := queryCheckUserGroup(db, gg, id);
+	if (err == nil){
+		gr.UsernameErr = "<p class='error'> You are already in this group </p>"
+		return gr;
+	}
+	queryJoinGroup(db, gg.GroupId, id);
+	return new(userAddForm);
 }
 func leaveGroup(gr *userAddForm, userid int) *userAddForm {
 	db := dbacc.OpenSQL();
@@ -227,7 +239,12 @@ func leaveGroup(gr *userAddForm, userid int) *userAddForm {
 		gr.UsernameErr = "<p class='error'> There is no such group </p>"
 		return gr;
 	}
-	queryLeaveGroup(db, gg.GroupId, userid);
+
+	if (userid == gg.Owner){
+		queryDestroyGroup(db, gg.GroupId)
+	} else{
+		queryLeaveGroup(db, gg.GroupId, userid);
+	}
 	return gr;
 }
 func sendMessage(m *messageForm) *messageForm {
@@ -297,4 +314,15 @@ func loginS(w http.ResponseWriter, r *http.Request, l *loginInfo)  {
 func logout(w http.ResponseWriter, r *http.Request)  {
 	ss.PruneUserSession(w, r);
 
+}
+func getSugg(uid int) *suggests{
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	gg := new(suggests);
+	queryGetSuggestion(db, gg, uid);
+	return gg;
+}
+
+type suggests  struct{
+	Suggest [] group;
 }

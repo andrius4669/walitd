@@ -29,6 +29,7 @@ func LoadTemplates() {
 	render.Load("sharedNews", "users/sharedNews.tmpl");
 	render.Load("menu", "menu.tmpl");
 	render.Load("notmenu", "notmenu.tmpl");
+	render.Load("text", "users/text.tmpl");
 }
 // users/createfriendlist GET/POST
 // users/creategroup GET/POST
@@ -61,6 +62,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 	}
 
 //	fmt.Printf("%v \n", ses);
+//	fmt.Printf("%v \n", string(ses_user_id));
 
 	rpath := r.URL.Path[pathi+1:]
 //	fmt.Printf("path: %v \n sesija: %v \n if: %v \n", rpath, ses, (ses != nil));
@@ -76,7 +78,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			if rpath == "" {
 				groups := getGroupsPage(ses_user_id)
 				arr := new(userAddForm) //it will be empty, in this case
-				renderGroupsPage(w, r, groups, arr)
+				renderGroupsPage(w, r, groups, arr, getSugg(ses_user_id))
 				return
 			}
 			i := str.IndexByte(rpath, '/')
@@ -101,7 +103,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			if rpath[:i] == "groups" {
 				groups := getGroupsPage(ses_user_id);
 				arr := new(userAddForm) //it will be empty, in this case
-				renderGroupsPage(w, r, groups, arr)
+				renderGroupsPage(w, r, groups, arr, getSugg(ses_user_id))
 				return
 			}
 			if rpath[:i] == "friendList" {
@@ -113,19 +115,19 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				if (id != ""){
 					id, err := strconv.Atoi(id);
 					if (err != nil){
-						http.Redirect( w, r , "/users/", http.StatusFound);
+						http.Redirect( w, r , "/users/profile/"+strconv.Itoa(ses_user_id), http.StatusFound);
 						return;
 					}
 					if (ses_user_id == id){
 						obj, ee := getUser(id);
 						if (ee != nil){
-							http.Redirect( w, r , "/users/", http.StatusFound);
+							http.Redirect( w, r , "/users/profile/"+strconv.Itoa(ses_user_id), http.StatusFound);
 						}
 						renderEditProfilePage(w, r, obj);
 					}else{
 						obj, ee := getUser(id);
 						if (ee != nil){
-							http.Redirect( w, r , "/users/", http.StatusFound);
+							http.Redirect( w, r , "/users/profile/"+strconv.Itoa(ses_user_id), http.StatusFound);
 						}
 						renderProfilePage(w, r, obj);
 						return
@@ -214,11 +216,11 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				obj.Username = form["group"][0]
 				act := form["act"][0];
 				if (act == "join"){
-					obj = joinToGroup(obj);
+					obj = joinToGroup(obj, ses_user_id);
 				} else{
 					obj = leaveGroup(obj, ses_user_id);
 				}
-				renderGroupsPage(w, r, getGroupsPage(ses_user_id), obj)
+				renderGroupsPage(w, r, getGroupsPage(ses_user_id), obj, getSugg(ses_user_id))
 				return
 			}
 			if i == -1 {
@@ -302,11 +304,11 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				obj.Username = form["group"][0];
 				act := form["act"][0];
 				if (act == "join"){
-					joinToGroup(obj);
+					joinToGroup(obj, ses_user_id);
 				} else{
 					leaveGroup(obj, ses_user_id);
 				}
-				renderGroupsPage(w, r, getGroupsPage(ses_user_id), obj)
+				renderGroupsPage(w, r, getGroupsPage(ses_user_id), obj, getSugg(ses_user_id))
 				return
 			}
 			if rpath[:i] == "friendList" {

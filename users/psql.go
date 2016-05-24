@@ -207,6 +207,30 @@ func queryLeaveGroup(db *sql.DB, groupid int, id int){
 	_, err:= db.Query("delete from usergroup where groupid=$1 and userid=$2", groupid, id);
 	panicErr(err);
 }
+func queryDestroyGroup(db *sql.DB, groupid int){
+	db.Query("delete from usergroup where groupid=$1", groupid);
+	db.Query("delete from groups where groupid=$1", groupid);
+}
+func queryCheckUserGroup(db *sql.DB, gg *group, userid int) error{
+	err := db.QueryRow("select groupid from usergroup where userid=$1 and groupid=$2", userid, gg.GroupId).Scan(&gg.GroupId);
+	return err;
+}
+func queryJoinGroup(db *sql.DB, gid int, uid int) {
+	db.Query("insert into usergroup (groupid, userid, level, created) values($1, $2, 2, now())", gid, uid);
+}
+func queryGetSuggestion(db *sql.DB, g *suggests, uid int)  {
+	rows, err := db.Query("select groups.groupid from groups left join usergroup on usergroup.groupid=groups.groupid where userid!=$1 and grouptype=1", uid);
+	if err != nil {
+		panicErr(err);
+	}
+	for rows.Next() {
+		var t int;
+		rows.Scan(&t);
+		gg := new(group);
+		queryGetGroup(db, gg, t);
+		g.Suggest = append(g.Suggest, *gg);
+	}
+}
 func panicErr(err error) {
 	if err != nil {
 		panic(err)
