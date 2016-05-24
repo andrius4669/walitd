@@ -1,0 +1,22 @@
+
+
+<form action="" method="post" id="articleForm">
+
+    <p>Article name <br>
+        <input name="name" type="text" value="{{.Name | html}}">
+    </p>
+    <p>Article Description <br>
+        <input name="description" type="text" value="{{.Description | html}}">
+    </p>
+
+    <input type="submit" value="Submit">
+
+</form>
+<p>Article <br>
+
+<textarea rows="100" cols="150" name="article" form="articleForm">
+    {{.Article | html}}
+</textarea>
+
+</p>
+
