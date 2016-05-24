@@ -129,26 +129,26 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				if (id != ""){
 					id, err := strconv.Atoi(id);
 					if (err != nil){
-						http.Redirect( w, r , "/users/profile/"+strconv.Itoa(ses_user_id), http.StatusFound);
+						http.Redirect( w, r , "/users/groups/", http.StatusFound);
 						return;
 					}
 					if (ses_user_id == id){
 						obj, ee := getUser(id);
 						if (ee != nil){
-							http.Redirect( w, r , "/users/profile/"+strconv.Itoa(ses_user_id), http.StatusFound);
+							http.Redirect( w, r , "/users/groups/", http.StatusFound);
 						}
 						renderEditProfilePage(w, r, obj);
 					}else{
 						obj, ee := getUser(id);
 						if (ee != nil){
-							http.Redirect( w, r , "/users/profile/"+strconv.Itoa(ses_user_id), http.StatusFound);
+							http.Redirect( w, r , "/users/groups/", http.StatusFound);
 						}
 						renderProfilePage(w, r, obj);
 						return
 					}
 
 				} else {
-					http.Redirect( w, r , "/users/", http.StatusFound);
+					http.Redirect( w, r , "/users/profile/"+strconv.Itoa(ses_user_id), http.StatusFound);
 					return
 				}
 				return

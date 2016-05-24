@@ -124,3 +124,6 @@ table#t01 {
 table{
 	margin-bottom: 10px;
 }
+.error {
+	color: darkred;
+}
