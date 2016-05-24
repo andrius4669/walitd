@@ -30,6 +30,7 @@ func LoadTemplates() {
 	render.Load("menu", "menu.tmpl");
 	render.Load("notmenu", "notmenu.tmpl");
 	render.Load("text", "users/text.tmpl");
+	render.Load("admin", "users/adminpage.tmpl");
 }
 // users/createfriendlist GET/POST
 // users/creategroup GET/POST
@@ -124,6 +125,12 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					http.Redirect( w, r , "/users/createfriendlist/", http.StatusFound);
 					return
 				}
+			}
+			if rpath[:i] == "admin" {
+				pp := new(friendListPage);
+				getAllUsers(pp);
+				renderAdminPage(w, r, new(userAddForm), pp);
+				return
 			}
 			if rpath[:i] == "profile" {
 				id := rpath[i+1:]

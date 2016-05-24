@@ -45,6 +45,7 @@ type user struct {
 	Picture string;
 	PictureCreated time.Time;
 	Err int;
+	Active int;
 }
 func (u user) p(){
 	u.Err = u.Err + 1;
@@ -190,6 +191,7 @@ type messageForm struct {
 type userAddForm struct {
 	Username string;
 	UsernameErr string;
+	Yeah int;
 }
 func getGroupsPage(id int) *groupsPage{
 	db := dbacc.OpenSQL();
@@ -376,4 +378,9 @@ func getFriendListSugg(uid int) *friendListPage  {
 	ff := new(friendListPage)
 	queryFriendListSugg(db, uid, ff);
 	return ff;
+}
+func getAllUsers(ff *friendListPage)  {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	queryGetAllUsers(db, ff);
 }

@@ -173,7 +173,7 @@ func queryGetGroupList(db *sql.DB,g *groupsPage, userid int) {
 }
 func queryCheckLogin(db *sql.DB, l *loginInfo) error{
 	var username sql.NullString;
-	err := db.QueryRow("Select username from users where username=$1 and password=$2", l.Username, l.Pass).Scan(&username);
+	err := db.QueryRow("Select username from users where username=$1 and password=$2 and active=1", l.Username, l.Pass).Scan(&username);
 //	panicErr(err);
 	return err;
 }
@@ -261,5 +261,16 @@ func queryFriendListSugg(db *sql.DB, uid1 int, g *friendListPage)  {
 func panicErr(err error) {
 	if err != nil {
 		panic(err)
+	}
+}
+func queryGetAllUsers(db *sql.DB,  g *friendListPage){
+	rows, err := db.Query("select userid from users");
+	panicErr(err);
+	for rows.Next() {
+		var t string;
+		rows.Scan(&t);
+		gg := new(user);
+		queryGetUser(db, gg, t);
+		g.UsersInfo = append(g.UsersInfo, *gg);
 	}
 }

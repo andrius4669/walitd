@@ -145,6 +145,16 @@ func renderMenu(w http.ResponseWriter, r *http.Request){
 		render.Execute(w, "notmenu", nil);
 	}
 }
+func renderAdminPage(w http.ResponseWriter, r *http.Request,  f *userAddForm, ff *friendListPage)  {
+	page := new(pageInfo);
+	page.Name = "Register";
+	page.Header = "Register page";
+	render.Execute(w, "header", page);
+	renderMenu(w, r);
+	render.Execute(w, "admin", ff)
+	render.Execute(w, "footer", nil);
+
+}
 
 
 

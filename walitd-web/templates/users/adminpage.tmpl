@@ -1,0 +1,42 @@
+<table class="table-bordered">
+    <tr>
+        <td>Username</td>
+        <td>Role</td>
+        <td>Active</td>
+    </tr>
+    {{range .UsersInfo -}} <tr>
+    <td>{{.Username}}</td>
+    <td>{{.RoleN}}</td>
+    <td>{{if (eq .Active 0)}} active{{end}}{{if (eq .Active 1)}} Not active{{end}} </td></tr>
+    {{- end}}
+</table>
+<br>
+<h3>Change user role</h3>
+<form action="" method="post">
+    <table>
+        <tr><td>Username</td><td><input type="text" name="user"></td></tr>
+        <tr>
+            <td>Role</td>
+            <td><select name="role">
+                <option value="1">User</option>
+                <option value="2">Administrator</option>
+                <option value="3">Super Admin</option></select></td>
+        </tr>
+        <tr>
+            <td><input type="hidden" name="adm" value="role"></td>
+
+            <td><input type="submit" value="Change"></td>
+        </tr>
+    </table>
+
+</form>
+<h3>Activate/deactivate user</h3>
+<form action="" method="post">
+        <table>
+            <tr><td>Username</td><td><input type="text" name="user"></td></tr>
+            <tr>
+                <td><input type="hidden" name="adm" value="active"></td>
+                <td><input type="submit" value="Activate/deactivate"></td>
+            </tr>
+        </table>
+</form>
