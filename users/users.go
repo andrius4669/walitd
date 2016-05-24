@@ -117,7 +117,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			if rpath[:i] == "friendlist" {
 				ff := hasFriendList(ses_user_id)
 				if !ff{
-					renderFriendListPage(w, r, new(userAddForm), getFriendList(ses_user_id));
+					ff:= getFriendListSugg(ses_user_id);
+					renderFriendListPage(w, r, new(userAddForm), getFriendList(ses_user_id), ff);
 					return
 				} else{
 					http.Redirect( w, r , "/users/createfriendlist/", http.StatusFound);
@@ -335,7 +336,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				} else{
 					obj = 	removeFriend(obj, ses_user_id);
 				}
-				renderFriendListPage(w, r, obj, getFriendList(ses_user_id));
+				ff:= getFriendListSugg(ses_user_id);
+				renderFriendListPage(w, r, obj, getFriendList(ses_user_id), ff);
 				return
 			}
 			if rpath[:i] == "profile" {

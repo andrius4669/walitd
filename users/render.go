@@ -52,7 +52,7 @@ func renderCreateGroupPage(w http.ResponseWriter, r *http.Request, obj *group)  
 	render.Execute(w, "creategroup", obj)
 	render.Execute(w, "footer", nil);
 }
-func renderFriendListPage(w http.ResponseWriter, r *http.Request, friend *userAddForm, list *friendListPage)  {
+func renderFriendListPage(w http.ResponseWriter, r *http.Request, friend *userAddForm, list *friendListPage, ff *friendListPage)  {
 	page := new(pageInfo);
 	page.Name = "Friend List";
 	page.Header = "Friend list page";
@@ -63,8 +63,13 @@ func renderFriendListPage(w http.ResponseWriter, r *http.Request, friend *userAd
 	}else{
 		render.Execute(w, "notmenu", nil);
 	}
+	render.Execute(w, "text", "<h3> Users in you friend list</h3>");
 	for i := 0; i < len(list.UsersInfo); i++ {
 		render.Execute(w, "profile", list.UsersInfo[i])
+	}
+	render.Execute(w, "text", "<h3> Suggestions to add to friend list</h3>");
+	for i := 0; i < len(ff.UsersInfo); i++ {
+		render.Execute(w, "profile", ff.UsersInfo[i])
 	}
 	render.Execute(w, "friendlist", friend)
 	render.Execute(w, "removefriend", friend)

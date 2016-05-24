@@ -247,6 +247,17 @@ func queryFriendList(db *sql.DB, uid1 int, g *friendListPage)  {
 		g.UsersInfo = append(g.UsersInfo, *gg);
 	}
 }
+func queryFriendListSugg(db *sql.DB, uid1 int, g *friendListPage)  {
+	rows, err := db.Query("select userid from users where userid!=$1", uid1);
+	panicErr(err);
+	for rows.Next() {
+		var t string;
+		rows.Scan(&t);
+		gg := new(user);
+		queryGetUser(db, gg, t);
+		g.UsersInfo = append(g.UsersInfo, *gg);
+	}
+}
 func panicErr(err error) {
 	if err != nil {
 		panic(err)

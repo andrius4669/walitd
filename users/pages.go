@@ -370,3 +370,10 @@ func hasFriendList(uid int) bool  {
 	asd :=  queryHasFriendList(db, uid);
 	return asd
 }
+func getFriendListSugg(uid int) *friendListPage  {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	ff := new(friendListPage)
+	queryFriendListSugg(db, uid, ff);
+	return ff;
+}
