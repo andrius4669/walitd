@@ -12,6 +12,6 @@
     <tr><td>Created</td><td>{{.Created}}</td></tr>
     <tr><td>Birthday</td><td>1994-01-24</td></tr>
     <tr><td>Updated</td><td>{{.Updated}}</td></tr>
-    <tr><td>Picture uploaded</td><td>{{.PictureCreated}}</td></tr>
-    <tr><td>Picture</td><td><img src="{{.Picture}}" alt="profile picture"></td></tr>
+    <tr><td>Picture uploaded</td><td>{{if (ne .Picture "")}} {{.PictureCreated}}{{end}}</td></tr>
+    <tr><td>Picture</td><td>{{if (ne .Picture "")}}<img src="{{.Picture}}" alt="profile picture">{{end}}</td></tr>
 </table>

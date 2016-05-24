@@ -205,9 +205,12 @@ func getMessagePage(uid int) *messages{
 	queryGetMessages(db, mm, uid)
 	return mm;
 }
-func getFriendList() *friendListPage {
-	//TODO: return friend list
-	return new(friendListPage);
+func getFriendList(uid int) *friendListPage {
+	ff := new(friendListPage);
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	queryFriendList(db, uid, ff);
+	return ff;
 }
 func getGroupPage(id int) (*group, error){
 	db := dbacc.OpenSQL();

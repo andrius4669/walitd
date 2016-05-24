@@ -133,23 +133,11 @@ func queryGetGroupByName(db *sql.DB, g *group, id string) error{
 	pp := db.QueryRow("select users.userid, users.username from usergroup left join users on users.userid=usergroup.userid where level=1 and groupid=$1", g.GroupId).Scan(&g.Owner, &g.OwnerName);
 	return pp;
 }
-func queryLogin(db *sql.DB, ul *loginInfo, u *user){
-	var id string;
-	err := db.QueryRow("select id from users where username=$1 and password=$2", ul.Username, ul.Pass).Scan(&id);
-	panicErr(err);
-	if id != "" {
-		queryGetUser(db, u, id);
-	}
-}
 func queryCreateGroup(db *sql.DB, g *group, ownerid int)  {
 	db.Query("insert into groups (name, description, created, grouptype, updated) values ($1, $2, now(), 1, now())", g.Name, g.Description);
 //	panicErr(err);
 	queryGetGroupByName(db, g, g.Name);
 	db.Query("insert into usergroup (groupid, userid, level, created) values($1, $2, 1, now())", g.GroupId, ownerid);
-}
-func queryAddToGroup(db *sql.DB, groupid int, level int, userid int){
-	_, err := db.Query("insert into usergroups (gruopid, userid, level, created) values($3, $1, $2, now())", userid, level, groupid);
-	panicErr(err);
 }
 func queryAddMessage(db *sql.DB, m *messageForm, uid int)  {
 	_, err := db.Query("insert into messages (sender, reciever, message, created) values($1, $2, $3, now())", m.Sender, uid, m.Message);
@@ -171,20 +159,6 @@ func queryUpdateUser(db *sql.DB, u *user){
 func queryUpdateGroup(db *sql.DB, g *group, id int)  {
 	_, err := db.Query("update groups set description=$2, updated=now() where groupid=$1", id, g.Description);
 	panicErr(err);
-}
-func queryGetFriendList(db *sql.DB, f *friendListPage, userid int){
-	var ss string;
-	err := db.QueryRow("Select usergroups.groupid from usergroups left join groups on usergroups.groupid=groups.groupid where usergroups.userid=$1 and groups.grouptype=2 and usergroups.level=1", userid).Scan(&ss);
-	panicErr(err);
-	rows, err2 := db.Query("Select userid from usergroups where groupid=$1 and userid!=$2", ss, userid);
-	panicErr(err2);
-	for rows.Next() {
-		var t string
-		rows.Scan(&t);
-		u := new(user);
-		queryGetUser(db, u, t);
-		f.UsersInfo = append(f.UsersInfo, *u);
-	}
 }
 func queryGetGroupList(db *sql.DB,g *groupsPage, userid int) {
 	rows, err := db.Query("Select groups.groupid from usergroup left join groups on usergroup.groupid=groups.groupid where usergroup.userid=$1 and groups.grouptype=1", userid);
@@ -259,6 +233,19 @@ func queryRemoveFriend(db *sql.DB, uid1 int, uid2 int)  {
 	err :=db.QueryRow("select groupid from usergroup where level=3 and userid=$1", uid2).Scan(&dd);
 	panicErr(err);
 	db.Query("delete from usergroup where groupid=$1 and userid=$2 and level=4", dd.String, uid1);
+}
+func queryFriendList(db *sql.DB, uid1 int, g *friendListPage)  {
+	var dd sql.NullString;
+	db.QueryRow("select groupid from usergroup where level=3 and userid=$1", uid1).Scan(&dd);
+	rows, err := db.Query("select userid from usergroup where groupid=$1 and level=4", dd);
+	panicErr(err);
+	for rows.Next() {
+		var t string;
+		rows.Scan(&t);
+		gg := new(user);
+		queryGetUser(db, gg, t);
+		g.UsersInfo = append(g.UsersInfo, *gg);
+	}
 }
 func panicErr(err error) {
 	if err != nil {
