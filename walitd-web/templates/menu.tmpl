@@ -9,7 +9,7 @@
             <li><a href="/users/profile/">Profile</a></li>
             <li><a href="/users/messages/">Messages</a></li>
             <li><a href="/users/friendlist/">Friend list</a></li>
-            <li><a href="/admin/">Admin</a></li>
+            {{if (gt . 1)}} <li><a href="/admin/">Admin</a></li>{{end}}
             <li><a href="/news/">Articles</a></li>
             <li><a><form action="/users/logout/" method="post"><input type="submit" value="Logout"></form></a></li>
         </ul>
