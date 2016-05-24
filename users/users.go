@@ -28,6 +28,7 @@ func LoadTemplates() {
 	render.Load("sendmessage", "users/sendMessage.tmpl");
 	render.Load("sharedNews", "users/sharedNews.tmpl");
 	render.Load("menu", "menu.tmpl");
+	render.Load("notmenu", "notmenu.tmpl");
 }
 // users/createfriendlist GET/POST
 // users/creategroup GET/POST
@@ -55,6 +56,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		uses := new(ss.UserSessionInfo);
 		ss.FillUserInfo(ses, uses);
 		ses_user_id = int(uses.Uid);
+	} else{
+		ses_user_id = -1;
 	}
 
 //	fmt.Printf("%v \n", ses);
@@ -71,7 +74,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		}
 		if (ses != nil || rpath[:p] == "profile"){
 			if rpath == "" {
-				groups := getGroupsPage()
+				groups := getGroupsPage(ses_user_id)
 				arr := new(userAddForm) //it will be empty, in this case
 				renderGroupsPage(w, r, groups, arr)
 				return
@@ -96,7 +99,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				return
 			}
 			if rpath[:i] == "groups" {
-				groups := getGroupsPage();
+				groups := getGroupsPage(ses_user_id);
 				arr := new(userAddForm) //it will be empty, in this case
 				renderGroupsPage(w, r, groups, arr)
 				return
@@ -113,15 +116,13 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 						http.Redirect( w, r , "/users/", http.StatusFound);
 						return;
 					}
-					//TODO: check if user's own profile
-					if (true){
+					if (ses_user_id == id){
 						obj, ee := getUser(id);
 						if (ee != nil){
 							http.Redirect( w, r , "/users/", http.StatusFound);
 						}
 						renderEditProfilePage(w, r, obj);
 					}else{
-						//TODO get obj from database;
 						obj, ee := getUser(id);
 						if (ee != nil){
 							http.Redirect( w, r , "/users/", http.StatusFound);
@@ -148,7 +149,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					if ee != nil{
 						http.Redirect( w, r , "/users/", http.StatusFound);
 					}
-					if (false){ //todo check if group owner
+					if (gg.Owner == ses_user_id){
 						renderGroupPage(w, r,gg);
 					} else{
 						renderGroupEditPage(w, r, gg);
@@ -215,9 +216,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				if (act == "join"){
 					obj = joinToGroup(obj);
 				} else{
-					obj = leaveGroup(obj);
+					obj = leaveGroup(obj, ses_user_id);
 				}
-				renderGroupsPage(w, r, getGroupsPage(), obj)
+				renderGroupsPage(w, r, getGroupsPage(ses_user_id), obj)
 				return
 			}
 			if i == -1 {
@@ -303,9 +304,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				if (act == "join"){
 					joinToGroup(obj);
 				} else{
-					leaveGroup(obj);
+					leaveGroup(obj, ses_user_id);
 				}
-				renderGroupsPage(w, r, getGroupsPage(), obj)
+				renderGroupsPage(w, r, getGroupsPage(ses_user_id), obj)
 				return
 			}
 			if rpath[:i] == "friendList" {

@@ -123,13 +123,14 @@ func queryGetGroup(db *sql.DB, g *group, id int) error{
 func queryGetGroupByName(db *sql.DB, g *group, id string) error{
 	var desc sql.NullString;
 	err := db.QueryRow("Select groupid, name, description, created, updated from groups where name=$1 and grouptype=1;", id).Scan(&g.GroupId, &g.Name, &desc, &g.Created, &g.Updated);
-	if (desc.Valid){
-		g.Description = desc.String;
-	}
 	if err != nil {
 		return err;
 	}
-	pp := db.QueryRow("select users.userid, users.username from usergroup left join users on users.userid=usergroup.userid where level=1 and groupid=$1", id).Scan(&g.Owner, &g.OwnerName);
+	if (desc.Valid){
+		g.Description = desc.String;
+	}
+
+	pp := db.QueryRow("select users.userid, users.username from usergroup left join users on users.userid=usergroup.userid where level=1 and groupid=$1", g.GroupId).Scan(&g.Owner, &g.OwnerName);
 	return pp;
 }
 func queryLogin(db *sql.DB, ul *loginInfo, u *user){
@@ -186,14 +187,13 @@ func queryGetFriendList(db *sql.DB, f *friendListPage, userid int){
 	}
 }
 func queryGetGroupList(db *sql.DB,g *groupsPage, userid int) {
-	rows, err := db.Query("Select groupid from usergroups left join groups on usergroups.groupid=groups.groupid where usergroups.userid=$1 and groups.grouptype=1", userid);
+	rows, err := db.Query("Select groups.groupid from usergroup left join groups on usergroup.groupid=groups.groupid where usergroup.userid=$1 and groups.grouptype=1", userid);
 	panicErr(err);
 	for rows.Next() {
 		var t int;
 		rows.Scan(&t);
 		gg := new(group);
 		queryGetGroup(db, gg, t);
-
 		g.GroupsInfo = append(g.GroupsInfo, *gg);
 	}
 }
@@ -202,6 +202,10 @@ func queryCheckLogin(db *sql.DB, l *loginInfo) error{
 	err := db.QueryRow("Select username from users where username=$1 and password=$2", l.Username, l.Pass).Scan(&username);
 //	panicErr(err);
 	return err;
+}
+func queryLeaveGroup(db *sql.DB, groupid int, id int){
+	_, err:= db.Query("delete from usergroup where groupid=$1 and userid=$2", groupid, id);
+	panicErr(err);
 }
 func panicErr(err error) {
 	if err != nil {

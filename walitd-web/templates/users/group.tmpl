@@ -5,4 +5,8 @@
         <tr><td>Created</td><td>{{.Created}}</td></tr>
         <tr><td>Updated</td><td>{{.Updated}}</td></tr>
         <tr><td>Creator</td><td>{{.OwnerName}}</td></tr>
+        <tr>
+            <td></td>
+            {{if (eq .Grr "grr")}} <td><a href="/users/group/{{.GroupId}}" class="btn btn-primary">Group info</a></td>{{end}}
+        </tr>
     </table>

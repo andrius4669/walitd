@@ -80,6 +80,7 @@ type group struct {
 	ErrCnt int;
 	Owner int;
 	OwnerName string;
+	Grr string;
 }
 
 func getGroup(id int) *group  {
@@ -175,7 +176,6 @@ func getUser(id int) (*user, error)  {
 	db := dbacc.OpenSQL();
 	defer db.Close();
 	idd := strconv.Itoa(id);
-	//TODO get dynamic info
 	obj := new(user);
 	err := queryGetUser(db, obj, idd);
 	return obj, err;
@@ -191,9 +191,13 @@ type userAddForm struct {
 	Username string;
 	UsernameErr string;
 }
-func getGroupsPage() *groupsPage{
+func getGroupsPage(id int) *groupsPage{
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	 g := new(groupsPage)
+	queryGetGroupList(db, g, id);
 	//TODO: return groups page info
-	return new(groupsPage);
+	return g;
 }
 func getMessagePage() *messages{
 	//TODO: return Messages
@@ -214,8 +218,16 @@ func joinToGroup(gr *userAddForm) *userAddForm{
 	//TODO: join group
 	return gr;
 }
-func leaveGroup(gr *userAddForm) *userAddForm {
-	//TODO: leave group
+func leaveGroup(gr *userAddForm, userid int) *userAddForm {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	gg := new(group);
+	ee := queryGetGroupByName(db, gg, gr.Username);
+	if (ee != nil){
+		gr.UsernameErr = "<p class='error'> There is no such group </p>"
+		return gr;
+	}
+	queryLeaveGroup(db, gg.GroupId, userid);
 	return gr;
 }
 func sendMessage(m *messageForm) *messageForm {
@@ -278,12 +290,11 @@ func loginS(w http.ResponseWriter, r *http.Request, l *loginInfo)  {
 	defer db.Close();
 	queryGetUserByUsername(db, uu, l.Username);
 	q := new(ss.UserSessionInfo);
-//	q.Role = uint32(uu.Role);
-//	q.Uid = uint32(uu.Userid);
-	q.Role = 1;
-	q.Uid = 1;
+	q.Role = uint32(uu.Role);
+	q.Uid = uint32(uu.Userid);
 	ss.MakeUserSession(w, r, q);
 }
 func logout(w http.ResponseWriter, r *http.Request)  {
+	ss.PruneUserSession(w, r);
 
 }

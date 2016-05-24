@@ -65,7 +65,7 @@ func GetUserSession(w http.ResponseWriter, r *http.Request) *SessionStore {
 }
 
 // for logging out
-func pruneUserSession(w http.ResponseWriter, r *http.Request) {
+func PruneUserSession(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := r.Cookie(manager.cookieName)
 	if cookie == nil || cookie.Value == "" {
 		return // no session
