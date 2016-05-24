@@ -1,6 +1,6 @@
 package users
 import (
-"fmt"
+//"fmt"
 //	"encoding/json"
 	"database/sql"
 //	"strconv"
@@ -160,7 +160,7 @@ func queryAddUser(db *sql.DB, u *userForm){
 	panicErr(err);
 }
 func queryUpdateUser(db *sql.DB, u *user){
-	fmt.Printf("%v \n", u);
+//	fmt.Printf("%v \n", u);
 	_, err := db.Query("update users set email=$1, firstname=$2, lastname=$3, country=$4, telephone=$5, city=$6, description=$8, updated=now() where userid=$9", u.Email, u.FirstName, u.SecondName, u.Country, u.Telephone, u.City, u.Description, u.Userid);
 	panicErr(err);
 	if (u.Picture != ""){
@@ -230,6 +230,35 @@ func queryGetSuggestion(db *sql.DB, g *suggests, uid int)  {
 		queryGetGroup(db, gg, t);
 		g.Suggest = append(g.Suggest, *gg);
 	}
+}
+func queryCreateFriendList(db *sql.DB, uid int)  {
+	db.Query("insert into groups (name, description, created, grouptype, updated) values ($1, $2, now(), 2, now())", "Friendlist", uid);
+	var groupid int;
+	db.QueryRow("select groupid from groups where grouptype=2 and description=$1", uid).Scan(&groupid);
+	db.Query("insert into usergroup (groupid, userid, level, created) values($1, $2, 3, now())", groupid, uid);
+}
+func queryHasFriendList(db *sql.DB, uid int) bool  {
+	_, err := db.Query("select groupid form usergroup where level=3 and userid=$1", uid)
+	return err == nil
+}
+func queryAddFriend(db *sql.DB, uid1 int, uid2 int)  {
+	var dd sql.NullString;
+	err :=db.QueryRow("select groupid from usergroup where level=3 and userid=$1", uid2).Scan(&dd);
+	panicErr(err);
+	var ss sql.NullString;
+	er := db.QueryRow("select groupid from usergroup where level=4 and groupid=$2 and userid=$1;",  uid1, dd.String).Scan(&ss);
+//	panicErr(er);
+	if er == nil{
+		return
+	} else{
+		db.Query("insert into usergroup (groupid, userid, level, created) values($1, $2, 4, now())", dd.String, uid1);
+	}
+}
+func queryRemoveFriend(db *sql.DB, uid1 int, uid2 int)  {
+	var dd sql.NullString;
+	err :=db.QueryRow("select groupid from usergroup where level=3 and userid=$1", uid2).Scan(&dd);
+	panicErr(err);
+	db.Query("delete from usergroup where groupid=$1 and userid=$2 and level=4", dd.String, uid1);
 }
 func panicErr(err error) {
 	if err != nil {

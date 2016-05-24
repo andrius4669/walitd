@@ -26,13 +26,11 @@ func validateRegisterForm(form *userForm) *userForm  {
 		form.p();
 		form.PassErr = makeErrorMessage("Password is too short");
 	}
-	//TODO: check if email validation works
 	_, err := mail.ParseAddress(form.Email)
 	if err != nil {
 		form.p();
 		form.EmailErr = makeErrorMessage("Bad email");
 	}
-	//TODO check if username is available
 	uu := new(user);
 	db := dbacc.OpenSQL();
 	defer db.Close();
@@ -60,7 +58,6 @@ func validateProfileForm(form *user) *user{
 		form.p();
 		form.PassErr = makeErrorMessage("Password is  too short");
 	}
-	//TODO: check if email validation works
 	_, err := mail.ParseAddress(form.Email)
 	if err != nil {
 		form.p();

@@ -1,7 +1,8 @@
 <form action="" method="POST">
     <input type="hidden" name="act"  value="remove">
     <table>
-        <tr><td>Username</td><td><input type="text" name="user" value="{{.Username}}"></td></tr>
-        <tr><td></td><td><input type="submit" value="Add friend"></td></tr>
+        <tr><td>Username</td><td><input type="text" name="user" value=""></td></tr>
+        <tr><td></td><td><input type="submit" value="Remove friend"></td></tr>
+        {{.UsernameErr}}
     </table>
 </form>

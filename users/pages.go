@@ -268,8 +268,10 @@ func register(r *userForm) {
 	defer db.Close();
 	queryAddUser(db, r);
 }
-func createFriendListF()  {
-	//TODO create friend list
+func createFriendListF(uid int)  {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	queryCreateFriendList(db, uid);
 }
 func createGroup(g *group, ses_user_id int) ( bool){
 	db := dbacc.OpenSQL();
@@ -277,18 +279,38 @@ func createGroup(g *group, ses_user_id int) ( bool){
 	gg := new(group);
 	ee := queryGetGroupByName(db, gg, g.Name);
 	if (ee != nil){
-		queryCreateGroup(db, g, ses_user_id);// todo set dynamic owner
+		queryCreateGroup(db, g, ses_user_id);
 		return true;
 	} else{
 		return false;
 	}
 }
-func addFriend(o *userAddForm) *userAddForm{
-	//TODO add friend
+func addFriend(o *userAddForm, uid int) *userAddForm{
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	uu := new(user);
+	ee := queryGetUserByUsername(db, uu, o.Username);
+	//	fmt.Printf("%v \n", uu)
+	if (ee != nil){
+		o.UsernameErr = makeErrorMessage("Where is no such user")
+		return o;
+	}
+	queryAddFriend(db, uu.Userid, uid);
+	o.UsernameErr ="<p> user added to friends list</p>";
 	return o;
 }
-func removeFriend(o *userAddForm) *userAddForm{
-	//TODO remove friend
+func removeFriend(o *userAddForm, uid int) *userAddForm{
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	uu := new(user);
+	ee := queryGetUserByUsername(db, uu, o.Username);
+	//	fmt.Printf("%v \n", uu)
+	if (ee != nil){
+		o.UsernameErr = makeErrorMessage("Where is no such user")
+		return o;
+	}
+	queryRemoveFriend(db, uu.Userid, uid);
+	o.UsernameErr ="<p> user removed to friends list</p>";
 	return o;
 }
 func editProfile(obj *user){
@@ -337,4 +359,11 @@ func getSugg(uid int) *suggests{
 
 type suggests  struct{
 	Suggest [] group;
+}
+
+func hasFriendList(uid int) bool  {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	asd :=  queryHasFriendList(db, uid);
+	return asd
 }

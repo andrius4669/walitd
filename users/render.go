@@ -35,7 +35,7 @@ func renderCreateFriendListPage(w http.ResponseWriter, r *http.Request)  {
 	}else{
 		render.Execute(w, "notmenu", nil);
 	}
-	render.Execute(w, "createfriendllist", nil);
+	render.Execute(w, "createfriendlist", nil);
 	render.Execute(w, "footer", nil);
 }
 func renderCreateGroupPage(w http.ResponseWriter, r *http.Request, obj *group)  {

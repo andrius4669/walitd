@@ -91,9 +91,17 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				renderMessagesPage(w, r, getMessagePage(ses_user_id), new(messageForm));
 				return
 			}
+
 			if rpath[:i] == "createfriendlist" {
-				renderCreateFriendListPage(w, r);
-				return
+				ff := hasFriendList(ses_user_id)
+				if ff{
+					renderCreateFriendListPage(w, r);
+					return
+				} else{
+					http.Redirect( w, r , "/users/friendlist/", http.StatusFound);
+					return
+				}
+
 			}
 			if rpath[:i] == "creategroup" {
 				obj := new(group);
@@ -106,9 +114,15 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				renderGroupsPage(w, r, groups, arr, getSugg(ses_user_id))
 				return
 			}
-			if rpath[:i] == "friendList" {
-				renderFriendListPage(w, r, new(userAddForm), getFriendList());
-				return
+			if rpath[:i] == "friendlist" {
+				ff := hasFriendList(ses_user_id)
+				if !ff{
+					renderFriendListPage(w, r, new(userAddForm), getFriendList());
+					return
+				} else{
+					http.Redirect( w, r , "/users/createfriendlist/", http.StatusFound);
+					return
+				}
 			}
 			if rpath[:i] == "profile" {
 				id := rpath[i+1:]
@@ -280,8 +294,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					return
 			}
 			if rpath[:i] == "createfriendlist" {
-				createFriendListF();
-				renderCreateFriendListPage(w, r);
+				createFriendListF(ses_user_id);
+				http.Redirect( w, r , "/users/friendlist/", http.StatusFound);
 				return
 			}
 			if rpath[:i] == "creategroup" {
@@ -312,14 +326,14 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				renderGroupsPage(w, r, getGroupsPage(ses_user_id), obj, getSugg(ses_user_id))
 				return
 			}
-			if rpath[:i] == "friendList" {
+			if rpath[:i] == "friendlist" {
 				obj := new(userAddForm)
 				obj.Username = form["user"][0];
 				act := form["act"][0];
 				if (act == "addFriend"){
-					obj = 	addFriend(obj);
+					obj = 	addFriend(obj, ses_user_id);
 				} else{
-					obj = 	removeFriend(obj);
+					obj = 	removeFriend(obj, ses_user_id);
 				}
 				renderFriendListPage(w, r, obj, getFriendList());
 				return
