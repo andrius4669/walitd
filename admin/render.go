@@ -15,6 +15,7 @@ func renderAdminPage(w http.ResponseWriter, r *http.Request) {
 render.Execute(w, "headerA", nil);
 render.Execute(w, "ArticlesFunctions", nil);
 render.Execute(w, "footer", nil);
+	//kkk
 }
 
 func renderEditPage(w http.ResponseWriter, r *http.Request){
