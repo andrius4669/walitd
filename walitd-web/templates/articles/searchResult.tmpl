@@ -1,0 +1,24 @@
+<table class="boardlist">
+    <tr>
+        <th>Author</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Score</th>
+        <th>VisitCount</th>
+        <th>Upload Date</th>
+        <th>Description</th>
+        <th>Link</th>
+    </tr>
+    {{range .Boards -}}
+    <tr>
+        <td><a href="../users/profile/{{.Author}}/">{{.AuthorName}}</a></td>
+        <td>{{.Name | html}}</td>
+        <td>{{.Category | html}}</td>
+        <td>{{.Score | html}}</td>
+        <td>{{.Visit_Count | html}}</td>
+        <td>{{.UploadDate | html}}</td>
+        <td>{{.Description | html}}</td>
+        <td><a href="/news/articles/{{.ID}}/">read more...</a></td>
+    </tr>
+    {{end -}}
+</table>

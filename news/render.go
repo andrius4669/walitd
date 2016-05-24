@@ -32,6 +32,18 @@ func renderArticles(w http.ResponseWriter, r *http.Request, id int) {
 	render.Execute(w, "article", page)
 }
 
+func renderSearchResult(w http.ResponseWriter, r *http.Request, search []string) {
+	page := new(ArticlesFrontPage)
+
+	db := dbacc.OpenSQL()
+	defer db.Close()
+	queryArticlesSearchList(db, page, search)
+
+	render.Execute(w, "searchArticle", page)
+	render.Execute(w, "searchResult", page)
+	render.Execute(w, "footer", page)
+}
+
 func renderArticleCreation(w http.ResponseWriter, r *http.Request){
 	page := new(articlesContent) //random struc
 	//db := dbacc.OpenSQL()

@@ -22,6 +22,8 @@ func LoadTemplates() {
 	render.Load("list", "articles/list.tmpl")
 	render.Load("createArticle", "articles/createArticle.tmpl")
 	render.Load("searchArticle", "articles/searchArticle.tmpl")
+	render.Load("searchResult", "articles/searchResult.tmpl")
+	render.Load("footer", "articles/footer.tmpl")
 }
 
 func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
@@ -65,51 +67,13 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			renderArticleSearch(w, r)
 			return
 		}
-		/*if rpath[:i] == "static" {
-			if rpath[i+1:] != "" {
-				serveStatic(w, r, rpath[i+1:])
-			} else {
-				// be lazy there :^)
-				http.Redirect(w, r, "../", http.StatusFound)
-			}
-			return
-		}
-		*/
-		/*board := rpath[:i]
-		rpath = rpath[i+1:]
-		mod := false
-		    if rpath == "mod" {
-			// append /
-			http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
-			return
-		} */
-		/* if len(rpath) >= 4 && rpath[:4] == "mod/" {
-			mod = true
-			rpath = rpath[4:]
-		}
-		*/
+
 		if rpath == "" {
 			// render first page
 			//renderBoardPage(w, r, board, 1, mod)
 			return
 		}
 		i = str.IndexByte(rpath, '/')
-
-		/*
-		if i < 0 {
-			n, err := strconv.ParseUint(rpath, 10, 32)
-			if err == nil {
-				// render nth page
-	//			renderBoardPage(w, r, board, uint32(n), mod)
-			} else {
-				// append /
-				http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
-			}
-			return
-		}
-		*/
-		//group := rpath[:i]
-		//rpath = rpath[i+1:]
 
 		if rpath == "" {
 			// be lazy there :^)
@@ -124,8 +88,6 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		r.ParseForm()
 		form := r.Form;
 		i := str.IndexByte(rpath, '/')
-		//fmt.Printf("%v \n", rpath[:i]);
-		//fmt.Printf("%v \n", i);
 
 		if rpath[:i] == "articles" {
 			vote := form["vote"][0];
@@ -148,33 +110,32 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			tags := form["tags"][0];
 			noCaseTags := strings.ToLower(tags)
 			slices := strings.Split(noCaseTags, ",")
-			//fmt.Printf("%v \n", name);
-			//fmt.Printf("%v \n", description);
-			//fmt.Printf("%v \n", article);
-			fmt.Printf("%v \n", tags);
-			fmt.Printf("%v \n", slices);
-			fmt.Printf("%v \n", slices[1]);
+
 			db := dbacc.OpenSQL()
+			var article_id int
 			defer db.Close()
 			createArticle(db, arr)
+			getArticleID(db, arr, slices, article_id)
+			//fmt.Printf("%v \n",  article_id2);
+			//addTags(db, slices, article_id2)
+			createTags(db, slices)
 			http.Redirect( w, r , "/news/", http.StatusFound);
 			return
 		}
 		if rpath[:i] == "searchArticle" {
-			name := form["name"][0];
-			author := form["author"][0];
+			//name := form["name"][0];
+			//author := form["author"][0];
 			tags := form["tags"][0];
 			noCaseTags := strings.ToLower(tags)
 			slices := strings.Split(noCaseTags, ",")
-			fmt.Printf("%v \n", name);
-			fmt.Printf("%v \n", author);
-			fmt.Printf("%v \n", tags);
-			fmt.Printf("%v \n", slices);
-			fmt.Printf("%v \n", slices[1]);
+			//fmt.Printf("%v \n", name);
+			//fmt.Printf("%v \n", author);
+			//fmt.Printf("%v \n", slices[1]);
 
-			renderArticlesList(w, r)
+			renderSearchResult(w, r, slices)
 			return
 		}
+
 		//http.Error(w, "501 POST routines not yet implemented", 501)
 	} else {
 		http.Error(w, "501 method not implemented", 501)
