@@ -92,14 +92,14 @@ func queryGetUserByUsername(db *sql.DB,u *user, username string) error {
 	return err;
 }
 func queryGetMessages(db *sql.DB, m *messages, id int){
-	rows, err := db.Query("Select sender, reciever, message, created from messages where sender=$1;", id);
+	rows, err := db.Query("Select sender, username, message, messages.created from messages left join users on userid=reciever where sender=$1;", id);
 	panicErr(err);
 	for rows.Next() {
 		var t message
 		rows.Scan(&t.Sender, &t.Reciever, &t.Text, &t.Created);
 		m.Sent = append(m.Sent, t);
 	}
-	rows, err = db.Query("Select sender, reciever, message, created from messages where reciever=$1;", id);
+	rows, err = db.Query("Select username, reciever, message, messages.created from messages left join users on userid=sender where reciever=$1;", id);
 	panicErr(err);
 	for rows.Next() {
 		var t message
@@ -151,8 +151,8 @@ func queryAddToGroup(db *sql.DB, groupid int, level int, userid int){
 	_, err := db.Query("insert into usergroups (gruopid, userid, level, created) values($3, $1, $2, now())", userid, level, groupid);
 	panicErr(err);
 }
-func queryAddMessage(db *sql.DB, m *messageForm)  {
-	_, err := db.Query("insert into messages (id, sender, reciever, mesage, created) values(0, $1, $2, $3, now())", m.Sender, m.To, m.Message);
+func queryAddMessage(db *sql.DB, m *messageForm, uid int)  {
+	_, err := db.Query("insert into messages (sender, reciever, message, created) values($1, $2, $3, now())", m.Sender, uid, m.Message);
 	panicErr(err);
 }
 func queryAddUser(db *sql.DB, u *userForm){

@@ -11,7 +11,7 @@ import (
 )
 
 func LoadTemplates() {
-	render.Load("createriendlist", "users/createFriendListLLL.tmpl");
+	render.Load("createfriendlist", "users/createFriendListLLL.tmpl");
 	render.Load("creategroup", "users/creategroup.tmpl");
 	render.Load("friendlist", "users/friendlist.tmpl");
 	render.Load("group", "users/group.tmpl");
@@ -88,7 +88,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				return
 			}
 			if rpath[:i] == "messages" {
-				renderMessagesPage(w, r, getMessagePage(), new(messageForm));
+				renderMessagesPage(w, r, getMessagePage(ses_user_id), new(messageForm));
 				return
 			}
 			if rpath[:i] == "createfriendlist" {
@@ -232,8 +232,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				obj := new(messageForm)
 				obj.To = form["reciever"][0];
 				obj.Message = form["message"][0];
+				obj.Sender = strconv.Itoa(ses_user_id);
 				obj = sendMessage(obj);
-				renderMessagesPage(w, r, getMessagePage(), obj);
+				renderMessagesPage(w, r, getMessagePage(ses_user_id), obj);
 				return
 			}
 			if rpath[:i] == "login" {

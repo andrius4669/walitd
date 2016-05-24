@@ -198,9 +198,12 @@ func getGroupsPage(id int) *groupsPage{
 	queryGetGroupList(db, g, id);
 	return g;
 }
-func getMessagePage() *messages{
-	//TODO: return Messages
-	return new(messages);
+func getMessagePage(uid int) *messages{
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	mm := new(messages)
+	queryGetMessages(db, mm, uid)
+	return mm;
 }
 func getFriendList() *friendListPage {
 	//TODO: return friend list
@@ -248,7 +251,16 @@ func leaveGroup(gr *userAddForm, userid int) *userAddForm {
 	return gr;
 }
 func sendMessage(m *messageForm) *messageForm {
-	//TODO send message
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	us := new(user);
+	err := queryGetUserByUsername(db, us, m.To);
+	if err != nil{
+		m.SenderErr = "<p class='error> such user do not exist</p>";
+	}else{
+		queryAddMessage(db, m, us.Userid);
+		m.SenderErr = "---"
+	}
 	return m;
 }
 func register(r *userForm) {
