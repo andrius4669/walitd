@@ -1,22 +1,23 @@
 
     <form action="" method="POST" class="form">
-        <table  class="table-bordered">
-            <tr><td>Name</td><td><input type="text" name="firstname" value="{{.FirstName}}"></td></tr>
-            <tr><td>Surname</td><td><input type="text" name="secondname" value="{{.SecondName}}"></td></tr>
-            <tr><td>Country</td><td><input type="text" name="country" value="{{.Country}}"></td></tr>
-            <tr><td>Telephone</td><td><input type="text" name="telephone" value="{{.Telephone}}"></td></tr>
-            <tr><td>Description</td><td><input type="text" name="desc" value="{{.Description}}"></td></tr>
-            <tr><td>City</td><td><input type="text" name="city" value="{{.City}}"></td></tr>
-            <tr><td>City</td><td><input type="text" name="email" value="{{.Email}}"></td></tr>
-            <tr><td>Birthday</td><td><input type="date" name="birth" value="1994-01-24"></td></tr>
-            <tr><td>Username</td><td>{{.Username}}</td></tr>
-            <tr><td>Role</td><td>{{.RoleN}}</td></tr>
-            <tr><td>Gender</td><td>{{.GenderN}}</td></tr>
-            <tr><td>Created</td><td>{{.Created}}</td></tr>
-            <tr><td>Updated</td><td>{{.Updated}}</td></tr>
-            <tr><td>Picture uploaded</td><td>{{if (ne .Picture "")}} {{.PictureCreated}}{{end}}</td></tr>
-            <tr><td>Picture</td><td>{{if (ne .Picture "")}}<img src="{{.Picture}}" alt="profile picture">{{end}}</td></tr>
-            <tr><td>New picture</td><td><input type="file" name="pic" accept="image/*"></td></tr>
-            <tr><td></td><td><input type="submit" value="Save"></td></tr>
+        <table  class="table table-bordered">
+            <tr><td class="fr">Name</td><td><input type="text" name="firstname" value="{{.FirstName}}"></td></tr>
+            <tr><td class="fr">Surname</td><td><input type="text" name="secondname" value="{{.SecondName}}"></td></tr>
+            <tr><td class="fr">Country</td><td><input type="text" name="country" value="{{.Country}}"></td></tr>
+            <tr><td class="fr">Telephone</td><td><input type="text" name="telephone" value="{{.Telephone}}"></td></tr>
+            <tr><td class="fr">Description</td><td><input type="text" name="desc" value="{{.Description}}"></td></tr>
+            <tr><td class="fr">City</td><td><input type="text" name="city" value="{{.City}}"></td></tr>
+            <tr><td class="fr">Email</td><td><input type="text" name="email" value="{{.Email}}"></td></tr>
+            <tr><td class="fr">Birthday</td><td><input type="date" name="birth" value="1994-01-24"></td></tr>
+            <!--<tr><td>Password</td><td><input type="password" name="birth" value="1994-01-24"></td></tr>-->
+            <tr><td class="fr">Username</td><td>{{.Username}}</td></tr>
+            <tr><td class="fr">Role</td><td>{{.RoleN}}</td></tr>
+            <tr><td class="fr">Gender</td><td>{{.GenderN}}</td></tr>
+            <tr><td class="fr">Created</td><td>{{.Created}}</td></tr>
+            <tr><td class="fr">Updated</td><td>{{.Updated}}</td></tr>
+            <tr><td class="fr">Picture uploaded</td><td>{{if (ne .Picture "")}} {{.PictureCreated}}{{end}}</td></tr>
+            <tr><td class="fr">Picture</td><td>{{if (ne .Picture "")}}<img src="{{.Picture}}" alt="profile picture">{{end}}</td></tr>
+            <tr><td class="fr">New picture</td><td><input type="file" name="pic" accept="image/*"></td></tr>
+            <tr><td class="fr"></td><td><input type="submit" value="Save" class="btn btn-primary"></td></tr>
         </table>
     </form>

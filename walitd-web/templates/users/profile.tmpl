@@ -1,17 +1,17 @@
-<table  class="table-bordered">
-    <tr><td>Name</td><td>{{.FirstName}}</td></tr>
-    <tr><td>Surname</td><td>{{.SecondName}}</td></tr>
-    <tr><td>Username</td><td>{{.Username}}</td></tr>
-    <tr><td>City</td><td>{{.Email}}</td></tr>
-    <tr><td>Role</td><td>{{.RoleN}}</td></tr>
-    <tr><td>City</td><td>{{.City}}</td></tr>
-    <tr><td>Country</td><td>{{.Country}}</td></tr>
-    <tr><td>Telephone</td><td>{{.Telephone}}</td></tr>
-    <tr><td>GenderN</td><td>{{.GenderN}}</td></tr>
-    <tr><td>Description</td><td>{{.Description}}</td></tr>
-    <tr><td>Created</td><td>{{.Created}}</td></tr>
-    <tr><td>Birthday</td><td>1994-01-24</td></tr>
-    <tr><td>Updated</td><td>{{.Updated}}</td></tr>
-    <tr><td>Picture uploaded</td><td>{{if (ne .Picture "")}} {{.PictureCreated}}{{end}}</td></tr>
-    <tr><td>Picture</td><td>{{if (ne .Picture "")}}<img src="{{.Picture}}" alt="profile picture">{{end}}</td></tr>
+<table  class="table table-bordered">
+    <tr><td class="fr">Name</td><td>{{.FirstName}}</td></tr>
+    <tr><td class="fr">Surname</td><td>{{.SecondName}}</td></tr>
+    <tr><td class="fr">Username</td><td>{{.Username}}</td></tr>
+    <tr><td class="fr">City</td><td>{{.Email}}</td></tr>
+    <tr><td class="fr">Role</td><td>{{.RoleN}}</td></tr>
+    <tr><td class="fr">City</td><td>{{.City}}</td></tr>
+    <tr><td class="fr">Country</td><td>{{.Country}}</td></tr>
+    <tr><td class="fr">Telephone</td><td>{{.Telephone}}</td></tr>
+    <tr><td class="fr">Gender</td><td>{{.GenderN}}</td></tr>
+    <tr><td class="fr">Description</td><td>{{.Description}}</td></tr>
+    <tr><td class="fr">Created</td><td>{{.Created}}</td></tr>
+    <tr><td class="fr">Birthday</td><td>1994-01-24</td></tr>
+    <tr><td class="fr">Updated</td><td>{{.Updated}}</td></tr>
+    <tr><td class="fr">Picture uploaded</td><td>{{if (ne .Picture "")}} {{.PictureCreated}}{{end}}</td></tr>
+    <tr><td class="fr">Picture</td><td>{{if (ne .Picture "")}}<img src="{{.Picture}}" alt="profile picture">{{end}}</td></tr>
 </table>

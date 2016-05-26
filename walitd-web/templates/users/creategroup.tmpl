@@ -1,8 +1,8 @@
 <form action="" method="POST" class="form">
-    <table>
-        <tr><td>Group Name</td><td><input type="text" name="name" value="{{.Name}}"></td></tr>
+    <table  class="table">
+        <tr><td class="fr">Group Name</td><td><input type="text" name="name" value="{{.Name}}"></td></tr>
         {{.NameErr}}
-        <tr><td>Group Description</td><td><input type="text" name="desc" value="{{.Description}}"></td></tr>
-        <tr><td></td><td><input type="submit" value="Create group"></td></tr>
+        <tr><td class="fr">Group Description</td><td><input type="text" name="desc" value="{{.Description}}"></td></tr>
+        <tr><td></td><td><input type="submit" value="Create group" class="btn btn-primary"></td></tr>
     </table>
 </form>

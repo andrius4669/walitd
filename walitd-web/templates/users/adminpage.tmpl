@@ -13,10 +13,10 @@
 <br>
 <h3>Change user role</h3>
 <form action="" method="post">
-    <table>
-        <tr><td>Username</td><td><input type="text" name="user"></td></tr>
+    <table class="table">
+        <tr><td class="fr">Username</td><td><input type="text" name="user"></td></tr>
         <tr>
-            <td>Role</td>
+            <td class="fr">Role</td>
             <td><select name="role">
                 <option value="1">User</option>
                 <option value="2">Administrator</option>
@@ -25,18 +25,18 @@
         <tr>
             <td><input type="hidden" name="adm" value="role"></td>
 
-            <td><input type="submit" value="Change"></td>
+            <td><input type="submit" value="Change" class="btn btn-primary"></td>
         </tr>
     </table>
 
 </form>
 <h3>Activate/deactivate user</h3>
 <form action="" method="post">
-        <table>
-            <tr><td>Username</td><td><input type="text" name="user"></td></tr>
+        <table class="table">
+            <tr><td class="fr">Username</td><td><input type="text" name="user"></td></tr>
             <tr>
                 <td><input type="hidden" name="adm" value="active"></td>
-                <td><input type="submit" value="Activate/deactivate"></td>
+                <td><input type="submit" value="Activate/deactivate" class="btn brn-primary"></td>
             </tr>
         </table>
 </form>

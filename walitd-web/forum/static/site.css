@@ -127,3 +127,6 @@ table{
 .error {
 	color: darkred;
 }
+.fr{
+	text-align: right;
+}

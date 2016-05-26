@@ -369,6 +369,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					arr.Telephone =form["telephone"][0];
 					arr.City =form["city"][0];
 					//TODO somehow handle birthday
+					//TODO: pasword change.....
 //					arr.Birthday =time.Now().Format(form["birth"][0]);
 					arr.Picture =form["pic"][0];
 					arr.Description =form["desc"][0];

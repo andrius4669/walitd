@@ -78,7 +78,9 @@ func renderGroupsPage(w http.ResponseWriter, r *http.Request, grp *groupsPage, o
 	page.Header = "Groups page";
 	render.Execute(w, "header", page);
 	renderMenu(w, r);
-	render.Execute(w, "text", "<h3>You are in these groups:</h3>");
+	if (len(grp.GroupsInfo) > 0) {
+		render.Execute(w, "text", "<h3>You are in these groups:</h3>");
+	}
 	for i := 0; i < len(grp.GroupsInfo); i++ {
 		grp.GroupsInfo[i].Grr = "grr";
 		render.Execute(w, "group", grp.GroupsInfo[i])
