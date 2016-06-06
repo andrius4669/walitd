@@ -369,7 +369,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 					arr.Telephone =form["telephone"][0];
 					arr.City =form["city"][0];
 					//TODO somehow handle birthday
-					//TODO: pasword change.....
+					//TODO: password change.....
 //					arr.Birthday =time.Now().Format(form["birth"][0]);
 					arr.Picture =form["pic"][0];
 					arr.Description =form["desc"][0];
@@ -402,7 +402,17 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				}
 				return
 			}
+			if rpath[:i] == "admin" {
+				ff := form["adm"][0];
+				if ff == "role"{
 
+					//TODO: handle post form for changing role
+				} else {
+					deactiveUser(form["user"][0]);
+					http.Redirect(w, r, r.URL.Path, http.StatusFound);
+				}
+				return;
+			}
 
 			if rpath == "" {
 				http.Redirect( w, r , "/users/", http.StatusFound);

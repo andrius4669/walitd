@@ -1,12 +1,12 @@
 
     <table  class="table table-bordered">
-        <tr><td class="fr">Group Name</td><td>{{.Name}}</td></tr>
-        <tr><td class="fr">Description</td><td>{{.Description}}</td></tr>
-        <tr><td class="fr">Created</td><td>{{.Created}}</td></tr>
-        <tr><td class="fr">Updated</td><td>{{.Updated}}</td></tr>
-        <tr><td class="fr">Creator</td><td>{{.OwnerName}}</td></tr>
-        <tr>
-            <td></td>
-            {{if (eq .Grr "grr")}} <td><a href="/users/group/{{.GroupId}}" class="btn btn-primary">Group info</a></td>{{end}}
-        </tr>
+    <tr><td class="fr">Group Name</td><td>{{.Name}}</td></tr>
+    <tr><td class="fr">Description</td><td>{{.Description}}</td></tr>
+    <tr><td class="fr">Created</td><td>{{.Created}}</td></tr>
+    <tr><td class="fr">Updated</td><td>{{.Updated}}</td></tr>
+    <tr><td class="fr">Creator</td><td>{{.OwnerName}}</td></tr>
+    <tr>
+        <td></td>
+        <td>{{if (eq .Grr "grr")}} <a href="/users/group/{{.GroupId}}" class="btn btn-primary">Group info</a>{{end}}</td>
+    </tr>
     </table>

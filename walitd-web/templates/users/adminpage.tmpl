@@ -1,4 +1,4 @@
-<table class="table-bordered">
+<table class="table table-bordered">
     <tr>
         <td>Username</td>
         <td>Role</td>
@@ -7,7 +7,7 @@
     {{range .UsersInfo -}} <tr>
     <td>{{.Username}}</td>
     <td>{{.RoleN}}</td>
-    <td>{{if (eq .Active 0)}} active{{end}}{{if (eq .Active 1)}} Not active{{end}} </td></tr>
+    <td>{{if (eq .Active 1)}} active{{end}}{{if (eq .Active 0)}} Not active{{end}} </td></tr>
     {{- end}}
 </table>
 <br>
@@ -36,7 +36,7 @@
             <tr><td class="fr">Username</td><td><input type="text" name="user"></td></tr>
             <tr>
                 <td><input type="hidden" name="adm" value="active"></td>
-                <td><input type="submit" value="Activate/deactivate" class="btn brn-primary"></td>
+                <td><input type="submit" value="Activate/deactivate" class="btn btn-primary"></td>
             </tr>
         </table>
 </form>

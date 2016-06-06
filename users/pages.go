@@ -384,3 +384,14 @@ func getAllUsers(ff *friendListPage)  {
 	defer db.Close();
 	queryGetAllUsers(db, ff);
 }
+func deactiveUser(username string)  {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	uu := new(user);
+	ee := queryGetUserByUsername(db, uu, username);
+	//	fmt.Printf("%v \n", uu)
+	if (ee != nil){
+		return;
+	}
+	queryDeactivateUser(db, username);
+}

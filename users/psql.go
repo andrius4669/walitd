@@ -7,8 +7,8 @@ import (
 )
 func queryGetUser(db *sql.DB, u *user, id string) error{
 	var email, city, country, phone, desc, picture sql.NullString;
-	err := db.QueryRow("SELECT userid, username, email, firstname, lastname, role, city, country, telephone, gender, description, created, updated, photo, photocreated FROM users where userid=$1;", id).
-	Scan(&u.Userid, &u.Username, &email , &u.FirstName, &u.SecondName, &u.Role, &city, &country, &phone, &u.Gender, &desc, &u.Created, &u.Updated, &picture, &u.PictureCreated);
+	err := db.QueryRow("SELECT userid, username, email, firstname, lastname, role, city, country, telephone, gender, description, created, updated, photo, photocreated, active FROM users where userid=$1;", id).
+	Scan(&u.Userid, &u.Username, &email , &u.FirstName, &u.SecondName, &u.Role, &city, &country, &phone, &u.Gender, &desc, &u.Created, &u.Updated, &picture, &u.PictureCreated, &u.Active);
 	if (email.Valid){
 		u.Email = email.String;
 	}
@@ -45,6 +45,7 @@ func queryGetUser(db *sql.DB, u *user, id string) error{
 	if (u.Role == 3) {
 		u.RoleN = "Super Admin"
 	}
+//	fmt.Printf("%v \n", u);
 //	panicErr(err);
 	return err;
 }
@@ -273,4 +274,15 @@ func queryGetAllUsers(db *sql.DB,  g *friendListPage){
 		queryGetUser(db, gg, t);
 		g.UsersInfo = append(g.UsersInfo, *gg);
 	}
+}
+func queryDeactivateUser(db *sql.DB, username string)  {
+	var ss sql.NullString;
+	db.QueryRow("select active from users where username=$1", username).Scan(&ss);
+	var a string;
+	if (ss.String) == "0"{
+		a = "1";
+	} else{
+		a = "0"
+	}
+	db.Query("update users set active=$1 where username=$2;", a, username);
 }
