@@ -286,3 +286,6 @@ func queryDeactivateUser(db *sql.DB, username string)  {
 	}
 	db.Query("update users set active=$1 where username=$2;", a, username);
 }
+func queryChangeUserRole(db *sql.DB, username string, role string)  {
+	db.Query("update users set role=$1 where username=$2", role, username);
+}

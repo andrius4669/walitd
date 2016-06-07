@@ -395,3 +395,14 @@ func deactiveUser(username string)  {
 	}
 	queryDeactivateUser(db, username);
 }
+func changeUserRole(username string, role string)  {
+	db := dbacc.OpenSQL();
+	defer db.Close();
+	uu := new(user);
+	ee := queryGetUserByUsername(db, uu, username);
+	//	fmt.Printf("%v \n", uu)
+	if (ee != nil){
+		return;
+	}
+	queryChangeUserRole(db, username, role);
+}
