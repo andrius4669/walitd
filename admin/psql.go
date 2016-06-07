@@ -2,6 +2,7 @@ package admin
 
 import (
 	"database/sql"
+	//"fmt"
 )
 
 func queryDeleteArticle(db *sql.DB, name string) {
@@ -13,8 +14,7 @@ func queryDeleteArticle(db *sql.DB, name string) {
 	db.QueryRow("DELETE FROM article WHERE article_name=$1", name)
 
 	db.QueryRow("DELETE FROM article_tags WHERE article_id=$1", id)
-	//panicErr(err)INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
-	//VALUES ('Cardinal','Tom B. Erichsen','Skagen 21','Stavanger','4006','Norway');
+	db.QueryRow("DELETE FROM score WHERE article_id=$1", id)
 }
 
 func panicErr(err error) {
@@ -28,6 +28,12 @@ func getArticle(db *sql.DB, p *articlesList, name string){
 	panicErr(err)
 }
 func updateArticle(db *sql.DB, p *articlesList){
-	db.QueryRow("UPDATE article_text, description, article_name FROM article WHERE article_name=$1", p.Name)
+	db.QueryRow("UPDATE article SET article_text=$2, description=$3, article_name=$4 WHERE article_id=$1", p.ID, p.Article, p.Description, p.Name)
 	//panicErr(err)
+}
+
+func getArticleID(db *sql.DB, p *articlesList, id *int) int {
+	err := db.QueryRow("SELECT article_id FROM article WHERE article_name=$1;", p.Name).Scan(&id);
+	panicErr(err);
+	return *id
 }

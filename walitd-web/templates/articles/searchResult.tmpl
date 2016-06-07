@@ -3,9 +3,10 @@
         <th>Author</th>
         <th>Name</th>
         <th>Category</th>
-        <th>Score</th>
+        <th>Score, %</th>
         <th>VisitCount</th>
         <th>Upload Date</th>
+        <th>Tags</th>
         <th>Description</th>
         <th>Link</th>
 
@@ -18,6 +19,7 @@
         <td>{{.Score | html}}</td>
         <td>{{.Visit_Count | html}}</td>
         <td>{{.UploadDate | html}}</td>
+        <td>{{.Tags | html}}</td>
         <td>{{.Description | html}}</td>
         <td><a href="/news/articles/{{.ID}}/">read more...</a></td>
     </tr>

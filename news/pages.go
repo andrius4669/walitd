@@ -26,6 +26,7 @@ type articlesList struct {
 	AuthorName string
 	UploadDate string
 	FullArticleLink string
+	Tags string
 }
 
 type ArticlesFrontPage struct {
@@ -33,19 +34,13 @@ type ArticlesFrontPage struct {
 	// maybe add some stats or sth
 }
 
+type voteInfo struct {
+	user_id int
+	article_id int
+	vote string
+}
+
 type fileContent struct {
 	Name     string // physical filename stored in server
 	Original string // original filename user uploaded with
 }
-
-/* type postContent struct {
-	PostID     uint32 // ID of post
-	Title      string // title of message
-	UserIdent  userIdent
-	Date       time.Time     // exact time message was posted
-	Message    string        // text of message
-	Files      []fileContent // post files
-	FMessage   string        // formatted message
-	References []uint32      // references to post
-}
-*/
