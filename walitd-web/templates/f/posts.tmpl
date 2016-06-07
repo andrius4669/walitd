@@ -73,7 +73,7 @@
 </a>
 {{- end -}}
 </p>
-{{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.Thumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
+{{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.FThumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
 </div>
 {{end -}}
 {{if (gt (len .Files) 1)}}<div style="clear: both;"></div>{{end}}
@@ -149,7 +149,7 @@
 </a>
 {{- end -}}
 </p>
-{{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.Thumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
+{{if .Valid}}<a href="/forum/{{$.Board}}/src/{{urlfile .Name}}">{{end}}<img src="{{.FThumb}}" alt="{{html .VName}}" />{{if .Valid}}</a>{{end}}
 </div>
 {{end -}}
 {{if (gt (len .Files) 1)}}<div style="clear: both;"></div>{{end}}

@@ -124,7 +124,15 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 	return true
 }
 
-func queryPostFiles(p *postContent, db *sql.DB) {
+func queryPostFiles(p *postContent, db *sql.DB, bid uint32, bname string) {
+    rows, err := db.Query("SELECT filename, thumb, original FROM forum.files WHERE boardid=$1 AND postid=$2 ORDER BY fileid ASC", bid, p.PostID)
+	panicErr(err)
+	for rows.Next() {
+		var f fileContent
+		rows.Scan(&f.Name, &f.Thumb, &f.Original)
+        f.board = bname
+		p.Files = append(p.Files, f)
+	}
 }
 
 func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool {
@@ -182,9 +190,9 @@ func queryThread(db *sql.DB, p *threadPage, board, thread string, mod bool) bool
 		}
 	}
 
-	queryPostFiles(&p.OP, db)
+	queryPostFiles(&p.OP, db, bid, board)
 	for i := range p.Replies {
-		queryPostFiles(&p.Replies[i], db)
+		queryPostFiles(&p.Replies[i], db, bid, board)
 	}
 
 	formatPost(p, &p.OP, db)
@@ -311,6 +319,13 @@ func sqlStoreThread(db *sql.DB, d *postMessage) bool {
 	panicErr(err)
 	_, err = stmt.Exec(d.boardid, tid, tid, d.UserID, d.PName, d.Trip, d.Email, d.Title, nowtime, d.Message)
 	panicErr(err)
+    // add files
+    for _, f := range d.Files {
+        stmt, err = db.Prepare("INSERT INTO forum.files (boardid, postid, filename, thumb, original) VALUES ($1, $2, $3, $4, $5)")
+        panicErr(err)
+        _, err = stmt.Exec(d.boardid, tid, f.Name, f.Thumb, f.Original)
+        panicErr(err)
+    }
 	// done
 	return true
 }
@@ -333,6 +348,13 @@ func sqlStorePost(db *sql.DB, d *postData) bool {
 	panicErr(err)
 	_, err = stmt.Exec(d.boardid, pid, d.ThreadID, d.UserID, d.PName, d.Trip, d.Email, d.Title, nowtime, d.Message)
 	panicErr(err)
+    // add files
+    for _, f := range d.Files {
+        stmt, err = db.Prepare("INSERT INTO forum.files (boardid, postid, filename, thumb, original) VALUES ($1, $2, $3, $4, $5)")
+        panicErr(err)
+        _, err = stmt.Exec(d.boardid, pid, f.Name, f.Thumb, f.Original)
+        panicErr(err)
+    }
 	// done
 	return true
 }

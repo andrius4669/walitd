@@ -60,8 +60,24 @@ func handleNewBoard(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func newPostHandler(w http.ResponseWriter, r *http.Request, threadid uint32) {
+}
+
+func newThreadHandler(w http.ResponseWriter, r *http.Request) {
+}
+
 // new thread or post creation
 func handlePost(w http.ResponseWriter, r *http.Request) {
-	//err = r.ParseMultipartForm(1 << 20)
-	//d := new(boardData)
+	err := r.ParseMultipartForm(1 << 20)
+    if err != nil {
+        fmt.Fprintf(w, "bad request")
+		return
+    }
+    thr, _ := r.Form["thread"]
+	if len(thr) > 0 {
+        i, _ := sc.Atoi(thr[0])
+		newPostHandler(w, r, uint32(i))
+	} else {
+        newThreadHandler(w, r)
+    }
 }
