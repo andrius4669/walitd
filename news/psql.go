@@ -2,7 +2,7 @@ package news
 
 import (
 
-	fm "../forum"
+	//fm "../forum"
 	"database/sql"
 	"strings"
 	"bytes"
