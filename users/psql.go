@@ -213,7 +213,9 @@ func queryCreateFriendList(db *sql.DB, uid int)  {
 	db.Query("insert into usergroup (groupid, userid, level, created) values($1, $2, 3, now())", groupid, uid);
 }
 func queryHasFriendList(db *sql.DB, uid int) bool  {
-	_, err := db.Query("select groupid form usergroup where level=3 and userid=$1", uid)
+	var groupid int;
+	err := db.QueryRow("select groupid from usergroup where level=3 and userid=$1", uid).Scan(&groupid);
+//	panicErr(err);
 	return err == nil
 }
 func queryAddFriend(db *sql.DB, uid1 int, uid2 int)  {

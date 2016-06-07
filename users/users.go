@@ -95,7 +95,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 
 			if rpath[:i] == "createfriendlist" {
 				ff := hasFriendList(ses_user_id)
-				if ff{
+				if !ff{
 					renderCreateFriendListPage(w, r);
 					return
 				} else{
@@ -116,8 +116,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 				return
 			}
 			if rpath[:i] == "friendlist" {
-				ff := hasFriendList(ses_user_id)
-				if !ff{
+				gg := hasFriendList(ses_user_id)
+				if gg{
 					ff:= getFriendListSugg(ses_user_id);
 					renderFriendListPage(w, r, new(userAddForm), getFriendList(ses_user_id), ff);
 					return
