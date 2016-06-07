@@ -153,7 +153,7 @@ func renderAdminPage(w http.ResponseWriter, r *http.Request,  f *userAddForm, ff
 	page.Header = "Register page";
 	render.Execute(w, "header", page);
 	renderMenu(w, r);
-	render.Execute(w, "admin", ff)
+	render.Execute(w, "admin", ff);
 	render.Execute(w, "footer", nil);
 
 }

@@ -405,8 +405,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 			if rpath[:i] == "admin" {
 				ff := form["adm"][0];
 				if ff == "role"{
-
-					//TODO: handle post form for changing role
+					changeUserRole(form["user"][0], form["role"][0]);
+					http.Redirect(w, r, r.URL.Path, http.StatusFound);
 				} else {
 					deactiveUser(form["user"][0]);
 					http.Redirect(w, r, r.URL.Path, http.StatusFound);
