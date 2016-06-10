@@ -125,12 +125,12 @@ func queryBoard(db *sql.DB, p *boardPage, board string, page uint32, mod bool) b
 }
 
 func queryPostFiles(p *postContent, db *sql.DB, bid uint32, bname string) {
-    rows, err := db.Query("SELECT filename, thumb, original FROM forum.files WHERE boardid=$1 AND postid=$2 ORDER BY fileid ASC", bid, p.PostID)
+	rows, err := db.Query("SELECT filename, thumb, original FROM forum.files WHERE boardid=$1 AND postid=$2 ORDER BY fileid ASC", bid, p.PostID)
 	panicErr(err)
 	for rows.Next() {
 		var f fileContent
 		rows.Scan(&f.Name, &f.Thumb, &f.Original)
-        f.board = bname
+		f.board = bname
 		p.Files = append(p.Files, f)
 	}
 }
@@ -270,12 +270,14 @@ func validateInputThread(db *sql.DB, d *postMessage) bool {
 func validateInputPost(db *sql.DB, d *postData) bool {
 	bid, ok := sqlGetBoard(db, d.Board)
 	if !ok {
+		//fmt.Printf("no such board(%s) found\n", d.Board)
 		return false
 	}
 	d.boardid = bid
 	var tid uint32
 	err := db.QueryRow("SELECT threadid FROM forum.threads WHERE boardid=$1 AND threadid=$2", bid, d.ThreadID).Scan(&tid)
 	if err == sql.ErrNoRows {
+		//fmt.Printf("no such thread(%d) found\n", d.ThreadID)
 		return false
 	}
 	panicErr(err)
@@ -319,14 +321,15 @@ func sqlStoreThread(db *sql.DB, d *postMessage) bool {
 	panicErr(err)
 	_, err = stmt.Exec(d.boardid, tid, tid, d.UserID, d.PName, d.Trip, d.Email, d.Title, nowtime, d.Message)
 	panicErr(err)
-    // add files
-    for _, f := range d.Files {
-        stmt, err = db.Prepare("INSERT INTO forum.files (boardid, postid, filename, thumb, original) VALUES ($1, $2, $3, $4, $5)")
-        panicErr(err)
-        _, err = stmt.Exec(d.boardid, tid, f.Name, f.Thumb, f.Original)
-        panicErr(err)
-    }
+	// add files
+	for _, f := range d.Files {
+		stmt, err = db.Prepare("INSERT INTO forum.files (boardid, postid, filename, thumb, original) VALUES ($1, $2, $3, $4, $5)")
+		panicErr(err)
+		_, err = stmt.Exec(d.boardid, tid, f.Name, f.Thumb, f.Original)
+		panicErr(err)
+	}
 	// done
+	d.PostID = tid
 	return true
 }
 
@@ -343,18 +346,20 @@ func sqlStorePost(db *sql.DB, d *postData) bool {
 		_, err = stmt.Exec(nowtime, d.boardid, d.ThreadID)
 		panicErr(err)
 	}
+	//fmt.Printf("@storepost: pid == %d\n", pid)
 	// insert into posts list
 	stmt, err := db.Prepare("INSERT INTO forum.posts (boardid, postid, threadid, userid, pname, trip, email, title, postdate, message) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)")
 	panicErr(err)
 	_, err = stmt.Exec(d.boardid, pid, d.ThreadID, d.UserID, d.PName, d.Trip, d.Email, d.Title, nowtime, d.Message)
 	panicErr(err)
-    // add files
-    for _, f := range d.Files {
-        stmt, err = db.Prepare("INSERT INTO forum.files (boardid, postid, filename, thumb, original) VALUES ($1, $2, $3, $4, $5)")
-        panicErr(err)
-        _, err = stmt.Exec(d.boardid, pid, f.Name, f.Thumb, f.Original)
-        panicErr(err)
-    }
+	// add files
+	for _, f := range d.Files {
+		stmt, err = db.Prepare("INSERT INTO forum.files (boardid, postid, filename, thumb, original) VALUES ($1, $2, $3, $4, $5)")
+		panicErr(err)
+		_, err = stmt.Exec(d.boardid, pid, f.Name, f.Thumb, f.Original)
+		panicErr(err)
+	}
 	// done
+	d.PostID = pid
 	return true
 }

@@ -2,8 +2,8 @@ package forum
 
 import (
 	"../users"
+	"net/url"
 	"time"
-    "net/url"
 )
 
 type boardInfo struct {
@@ -41,20 +41,20 @@ func (f *fileContent) VName() string {
 }
 
 func (f *fileContent) FThumb() string {
-    if len(f.Thumb) > 0 && f.Thumb[0] != '/' {
-        var u = url.URL{Path: "/forum/"+f.board+"/thumb/"+f.Thumb}
-        return u.EscapedPath()
-    }
-    var spath string
-    switch f.Thumb {
-    case "/test":
-        spath = "/forum/static/testthumb.jpg"
-    }
-    if spath != "" {
-        var u = url.URL{Path: spath}
-        return u.EscapedPath()
-    }
-    return ""
+	if len(f.Thumb) > 0 && f.Thumb[0] != '/' {
+		var u = url.URL{Path: "/forum/" + f.board + "/thumb/" + f.Thumb}
+		return u.EscapedPath()
+	}
+	var spath string
+	switch f.Thumb {
+	case "/test":
+		spath = "/forum/static/testthumb.jpg"
+	}
+	if spath != "" {
+		var u = url.URL{Path: spath}
+		return u.EscapedPath()
+	}
+	return ""
 }
 
 type userIdent struct {

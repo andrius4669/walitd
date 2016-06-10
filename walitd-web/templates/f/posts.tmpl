@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta charset="UTF-8" />
 <title>{{.Board}} - #{{.ID}}</title>
 <link rel="stylesheet" type="text/css" href="/forum/static/site.css" />
 </head>
@@ -165,6 +166,32 @@
 {{end}}
 
 </table>
+
+<form action="/forum/post" method="post" enctype="multipart/form-data">
+<input name="board" type="hidden" value="{{$.Board}}" />
+<input name="thread" type="hidden" value="{{$.ID}}" />
+<table>
+<tr>
+<th>Name</th>
+<td><input name="name" type="text" placeholder="optional poster name" /></td>
+</tr>
+<tr>
+<th>Topic</th>
+<td><input name="title" type="text" placeholder="post title" /></td>
+</tr>
+<tr>
+<th>Email</th>
+<td><input name="email" type="text" placeholder="post email" /></td>
+</tr>
+<tr>
+<th>Message</th>
+<td><textarea name="message" cols="40" rows="10"></textarea></td>
+</tr>
+<tr>
+<td></td>
+<td><input name="submit" type="submit" /></td>
+</table>
+</form>
 
 </body>
 </html>

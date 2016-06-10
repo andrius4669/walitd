@@ -13,6 +13,7 @@ type postMessage struct {
 	Title   string
 	Message string
 	Files   []fileContent
+	PostID  uint32 // cached after post
 }
 
 // data for new post in existing thread

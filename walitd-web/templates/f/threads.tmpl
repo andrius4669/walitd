@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta charset="UTF-8" />
 <title>/{{.Board}}/ - {{.Topic | html}}</title>
 <link rel="stylesheet" type="text/css" href="/forum/static/site.css" />
 </head>
@@ -9,6 +10,33 @@
 &gt; <a href="/forum/{{.Board}}/">/{{.Board}}/</a>
 {{if .Mod}}&gt; <a href="/forum/{{.Board}}/mod/">mod</a>{{end}}
 </div>
+
+<form action="/forum/post" method="post" enctype="multipart/form-data">
+<input name="board" type="hidden" value="{{$.Board}}" />
+<table>
+<tr>
+<th>Name</th>
+<td><input name="name" type="text" placeholder="optional poster name" /></td>
+</tr>
+<tr>
+<th>Topic</th>
+<td><input name="title" type="text" placeholder="post title" /></td>
+</tr>
+<tr>
+<th>Email</th>
+<td><input name="email" type="text" placeholder="post email" /></td>
+</tr>
+<tr>
+<th>Message</th>
+<td><textarea name="message" cols="40" rows="10"></textarea></td>
+</tr>
+<tr>
+<td></td>
+<td><input name="submit" type="submit" /></td>
+</table>
+</form>
+
+
 <table class="threadlist">
 <tr>
 <th>ID</th>

@@ -27,7 +27,16 @@ func localValidatePost(t *threadPage, p *postContent, post uint32, thread *uint3
 		} else {
 			rp = &t.Replies[rpi-1]
 		}
-		rp.References = append(rp.References, p.PostID)
+		var found bool
+		for ref := len(rp.References) - 1; ref >= 0; ref-- {
+			if rp.References[ref] == p.PostID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			rp.References = append(rp.References, p.PostID)
+		}
 		*thread = t.ID
 		return true
 	}
@@ -161,7 +170,7 @@ func formatPost(t *threadPage, p *postContent, db *sql.DB) {
 				} else {
 					if sqlValidateBoard(db, board) {
 						// board ok
-						esc = append(esc, []byte(fmt.Sprintf("<a class=\"crossboard\" href=\"/%s/\">", board))...)
+						esc = append(esc, []byte(fmt.Sprintf("<a class=\"crossboard\" href=\"/forum/%s/\">", board))...)
 						esc = append(esc, htmlGt...)
 						esc = append(esc, htmlGt...)
 						esc = append(esc, htmlGt...)

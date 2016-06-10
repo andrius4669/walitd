@@ -14,6 +14,9 @@ func LoadTemplates() {
 	//render.Load("boardadmin", "f/boardadmin.tmpl") // allows to set settings for existing board
 	render.Load("threads", "f/threads.tmpl") // shows whole board. for mods with extra options
 	render.Load("posts", "f/posts.tmpl")     // shows all posts in thread
+	render.Load("boardmade", "f/boardmade.tmpl")
+	render.Load("threadmade", "f/threadmade.tmpl")
+	render.Load("postmade", "f/postmade.tmpl")
 	//render.Load("postedit", "f/postedit.tmpl")     // allows editing existing post
 }
 
