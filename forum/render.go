@@ -45,7 +45,21 @@ func renderBoardModPage(w http.ResponseWriter, r *http.Request, board string) {
 }
 
 func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid uint32, mod bool) {
+	if mod {
+		s := ss.GetUserSession(w, r)
+		if s == nil {
+			http.Error(w, "401 unauthorized: not logged in", 401)
+			return
+		}
+		usi := new(ss.UserSessionInfo)
+		ss.FillUserInfo(s, usi)
+		if usi.Role < 2 {
+			http.Error(w, "401 unauthorized: privilege too low", 401)
+			return
+		}
+	}
 	page := new(boardPage)
+	page.Mod = mod
 	db := dbacc.OpenSQL()
 	defer db.Close()
 	if !queryBoard(db, page, board, pid, mod) {
@@ -56,7 +70,21 @@ func renderBoardPage(w http.ResponseWriter, r *http.Request, board string, pid u
 }
 
 func renderThread(w http.ResponseWriter, r *http.Request, board string, thread string, mod bool) {
+	if mod {
+		s := ss.GetUserSession(w, r)
+		if s == nil {
+			http.Error(w, "401 unauthorized: not logged in", 401)
+			return
+		}
+		usi := new(ss.UserSessionInfo)
+		ss.FillUserInfo(s, usi)
+		if usi.Role < 2 {
+			http.Error(w, "401 unauthorized: privilege too low", 401)
+			return
+		}
+	}
 	page := new(threadPage)
+	page.Mod = mod
 	db := dbacc.OpenSQL()
 	defer db.Close()
 	if !queryThread(db, page, board, thread, mod) {
