@@ -55,14 +55,7 @@ return
 	i := str.IndexByte(rpath, '/')
 
 
-	delete := form["delete"][0];
-	fmt.Printf("%v DELETE \n", delete);
-	if delete != "" {
-		db := dbacc.OpenSQL()
-		defer db.Close()
-		queryDeleteArticle(db, delete);
-		renderAdminPage(w, r)
-	}
+
 
 
 	if i == -1 {
