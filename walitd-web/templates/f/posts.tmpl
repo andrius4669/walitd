@@ -50,6 +50,9 @@
 <div class="postinfo">
 <b>{{date .Date}}</b>
 <a href="#{{.PostID}}">#</a>{{.PostID}}
+{{- if $.Mod -}}
+<form action="/forum/delpost" method="post"><input name="board" type="hidden" value="{{$.Board}}" /><input name="post" type="hidden" value="{{.PostID}}" /><input name="submit" type="submit" value="Delete" /></form>
+{{- end -}}
 </div>
 <div style="clear: both;"></div>
 </div>
@@ -125,6 +128,13 @@
 <div class="postinfo">
 <b>{{date .Date}}</b>
 <a href="#{{.PostID}}">#</a>{{.PostID}}
+{{- if $.Mod -}}
+<form action="/forum/delpost" method="post">
+<input name="board" type="hidden" value="{{$.Board}}" />
+<input name="post" type="hidden" value="{{.PostID}}" />
+<input name="submit" type="submit" value="Delete" />
+</form>
+{{- end -}}
 </div>
 <div style="clear: both;"></div>
 </div>

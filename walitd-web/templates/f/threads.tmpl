@@ -44,6 +44,9 @@
 <th>Started by</th>
 <th>Replies</th>
 <th>Last post</th>
+{{if $.Mod -}}
+<th>Delete</th>
+{{end -}}
 </tr>
 {{range .Threads -}}
 <tr>
@@ -95,6 +98,15 @@
 {{- end -}}
 {{end}}
 </td>
+{{if $.Mod -}}
+<td>
+<form action="/forum/delpost" method="post">
+<input name="board" type="hidden" value="{{$.Board}}" />
+<input name="post" type="hidden" value="{{.ID}}" />
+<input name="submit" type="submit" value="Delete" />
+</form>
+</td>
+{{end -}}
 </tr>
 {{end -}}
 </table>

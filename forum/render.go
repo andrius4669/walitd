@@ -13,9 +13,12 @@ import (
 //func Execute(w io.Writer, name string, data interface{})
 func renderBoardList(w http.ResponseWriter, r *http.Request) {
 	page := new(frontPage)
+
 	db := dbacc.OpenSQL()
 	defer db.Close()
+
 	queryBoardList(db, page)
+
 	render.Execute(w, "boards", page)
 }
 
@@ -34,9 +37,12 @@ func renderBoardListModPage(w http.ResponseWriter, r *http.Request) {
 	}
 	page := new(frontPage)
 	page.Mod = true
+
 	db := dbacc.OpenSQL()
 	defer db.Close()
+
 	queryBoardList(db, page)
+
 	render.Execute(w, "boards", page)
 }
 

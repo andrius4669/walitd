@@ -203,5 +203,47 @@ func handleDelBoard(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDelPost(w http.ResponseWriter, r *http.Request) {
+	s := ss.GetUserSession(w, r)
+	if s == nil {
+		http.Error(w, "401 unauthorized: not logged in", 401)
+		return
+	}
+	usi := new(ss.UserSessionInfo)
+	ss.FillUserInfo(s, usi)
+	if usi.Role < 2 {
+		http.Error(w, "401 unauthorized: privilege too low", 401)
+		return
+	}
+
 	r.ParseForm()
+
+	var board string
+	var post uint32
+
+	bn, _ := r.Form["board"]
+	if len(bn) > 0 {
+		board = bn[0]
+	}
+	pst, _ := r.Form["post"]
+	if len(pst) > 0 {
+		i, _ := sc.Atoi(pst[0])
+		post = uint32(i)
+	}
+	if board == "" {
+		fmt.Fprintf(w, "bad data (board name is empty)")
+		return
+	}
+	if post == 0 {
+		fmt.Fprintf(w, "bad data (post undefined)")
+		return
+	}
+
+	db := dbacc.OpenSQL()
+	defer db.Close()
+
+	if sqlDeletePost(db, board, post) {
+		fmt.Fprintf(w, "post deleted")
+	} else {
+		fmt.Fprintf(w, "failed to delete post")
+	}
 }
