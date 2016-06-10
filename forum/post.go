@@ -266,7 +266,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 			}
 
 			fname := sc.FormatInt(uniqueTimestamp(), 10) + ext
-			os.MkdirAll(serveSrcPathDir(board), 777)
+			os.MkdirAll(serveSrcPathDir(board), os.ModePerm)
 			fullname := serveSrcPath(board, fname)
 			tmpname := serveSrcPath(board, ".tmp."+fname)
 			nf, err := os.OpenFile(tmpname, os.O_WRONLY|os.O_CREATE, 0666)

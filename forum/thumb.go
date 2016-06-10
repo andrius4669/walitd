@@ -77,7 +77,7 @@ func runConvertCmd(gm bool, source, destdir, dest, destext, bgcolor string) erro
 	tmpfile := destdir + "/" + ".tmp." + dest + "." + destext
 	dstfile := destdir + "/" + dest + "." + destext
 
-	_ = os.MkdirAll(destdir, 777)
+	_ = os.MkdirAll(destdir, os.ModePerm)
 
 	var runfile string
 	var args []string
