@@ -14,6 +14,19 @@ import (
 
 // board does not contain /, it's filtered out by caller
 // file can not contain / too
+func serveSrcPathDir(board string) string {
+	// board cannot be . or .., file cannot start with . (we will hide tmp files that way)
+	if board == "." || board == ".." {
+		return ""
+	}
+
+	fdir, _ := cfg.GetOption("forum.filedir")
+	sdir, _ := cfg.GetOption("forum.srcdir")
+	return fdir + "/" + board + "/" + sdir
+}
+
+// board does not contain /, it's filtered out by caller
+// file can not contain / too
 func serveSrcPath(board, file string) string {
 	// board cannot be . or .., file cannot start with . (we will hide tmp files that way)
 	if board == "." || board == ".." {
