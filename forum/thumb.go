@@ -90,18 +90,18 @@ func runConvertCmd(gm bool, source, destdir, dest, destext, bgcolor string) erro
 	}
 
 	var convsrc string
-	if i := strings.LastIndexByte(source, '.'); i >= 0 {
-		var saucetype string
-		if strings.ToUpper(source[i+1:]) != "JPG" {
-			saucetype = strings.ToUpper(source[i+1:])
-		} else {
-			saucetype = "JPEG"
-		}
-		convsrc = saucetype + ":" + source + "[0]"
-	} else {
-		// shouldn't happen
-		convsrc = source + "[0]"
-	}
+	//	if i := strings.LastIndexByte(source, '.'); i >= 0 {
+	//		var saucetype string
+	//		if strings.ToUpper(source[i+1:]) != "JPG" {
+	//			saucetype = strings.ToUpper(source[i+1:])
+	//		} else {
+	//			saucetype = "JPEG"
+	//		}
+	//		convsrc = saucetype + ":" + source + "[0]"
+	//	} else {
+	// shouldn't happen
+	convsrc = source + "[0]"
+	//}
 
 	args = append(args, convsrc, "-thumbnail", fmt.Sprintf("%dx%d", thumbMaxW, thumbMaxH))
 	if bgcolor != "" {
