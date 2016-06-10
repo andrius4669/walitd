@@ -78,7 +78,7 @@ func runConvertCmd(gm bool, source, destdir, dest, destext, bgcolor string) erro
 	dstfile := destdir + "/" + dest + "." + destext
 
 	_ = os.MkdirAll(destdir, 777)
-	
+
 	var runfile string
 	var args []string
 
@@ -91,7 +91,13 @@ func runConvertCmd(gm bool, source, destdir, dest, destext, bgcolor string) erro
 
 	var convsrc string
 	if i := strings.LastIndexByte(source, '.'); i >= 0 {
-		convsrc = source[i+1:] + ":" + source + "[0]"
+		var saucetype string
+		if strings.ToUpper(source[i+1:]) != "JPG" {
+			saucetype = strings.ToUpper(source[i+1:])
+		} else {
+			saucetype = "JPEG"
+		}
+		convsrc = saucetype + ":" + source + "[0]"
 	} else {
 		// shouldn't happen
 		convsrc = source + "[0]"
