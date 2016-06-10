@@ -1,7 +1,7 @@
 package users
 
 import (
-//	"fmt"
+	"fmt"
 	"../render"
 	"net/http"
 	"strconv"
@@ -373,9 +373,9 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 //					arr.Birthday =time.Now().Format(form["birth"][0]);
 					arr.Picture =form["pic"][0];
 					arr.Description =form["desc"][0];
-//					fmt.Printf("%v \n", arr);
+					fmt.Printf("%v \n", arr);
 					arr = validateProfileForm(arr);
-					if (arr.Err > 0){
+					if (arr.Err == 0){
 						editProfile(arr);
 					}
 					renderEditProfilePage(w, r, arr);

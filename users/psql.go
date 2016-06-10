@@ -150,7 +150,7 @@ func queryAddUser(db *sql.DB, u *userForm){
 }
 func queryUpdateUser(db *sql.DB, u *user){
 //	fmt.Printf("%v \n", u);
-	_, err := db.Query("update users set email=$1, firstname=$2, lastname=$3, country=$4, telephone=$5, city=$6, description=$8, updated=now() where userid=$9", u.Email, u.FirstName, u.SecondName, u.Country, u.Telephone, u.City, u.Description, u.Userid);
+	_, err := db.Query("update users set email=$1, firstname=$2, lastname=$3, country=$4, telephone=$5, city=$6, description=$7, updated=now() where userid=$8", u.Email, u.FirstName, u.SecondName, u.Country, u.Telephone, u.City, u.Description, u.Userid);
 	panicErr(err);
 	if (u.Picture != ""){
 		_, err := db.Query("update users set photo=$2, photocreated=now() where userid=$1", u.Userid, u.Picture);
