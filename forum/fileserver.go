@@ -16,7 +16,7 @@ import (
 // file can not contain / too
 func serveSrcPath(board, file string) string {
 	// board cannot be . or .., file cannot start with . (we will hide tmp files that way)
-	if board == "." || board == ".." || file[0] == '.' {
+	if board == "." || board == ".." {
 		return ""
 	}
 
@@ -32,6 +32,16 @@ func serveSrc(w http.ResponseWriter, r *http.Request, board, file string) {
 		return
 	}
 	files.ServeFileOr404(w, r, file)
+}
+
+func serverThumbPathDir(board string) string {
+	if board == "." || board == ".." {
+		return ""
+	}
+
+	fdir, _ := cfg.GetOption("forum.filedir")
+	tdir, _ := cfg.GetOption("forum.thumbdir")
+	return fdir + "/" + board + "/" + tdir
 }
 
 // board does not contain /, it's filtered out by caller

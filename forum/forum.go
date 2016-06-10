@@ -18,6 +18,7 @@ func LoadTemplates() {
 	render.Load("threadmade", "f/threadmade.tmpl")
 	render.Load("postmade", "f/postmade.tmpl")
 	//render.Load("postedit", "f/postedit.tmpl")     // allows editing existing post
+	initMime()
 }
 
 /*

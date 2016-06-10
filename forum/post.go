@@ -5,9 +5,57 @@ import (
 	"../render"
 	ss "../sessions"
 	"fmt"
+	"io"
+	"mime"
 	"net/http"
+	"os"
+	"path/filepath"
 	sc "strconv"
+	"sync"
+	"time"
 )
+
+const (
+	maxImageSize = 8 << 20
+	maxMusicSize = 50 << 20 // :^)
+)
+
+// nice place to also include file sizes
+var allowedTypes = map[string]int64{
+	"image/gif":  maxImageSize,
+	"image/jpeg": maxImageSize,
+	"image/png":  maxImageSize,
+	"image/bmp":  maxImageSize,
+	"audio/mpeg": maxMusicSize,
+	"audio/ogg":  maxMusicSize,
+	"audio/flac": maxMusicSize,
+}
+
+// add our own mime stuff since golang's parser erroreusly overwrites image/bmp with image/x-ms-bmp
+func initMime() {
+	mime.AddExtensionType(".bmp", "image/bmp")
+	mime.AddExtensionType(".ogg", "audio/ogg")
+	mime.AddExtensionType(".flac", "audio/flac")
+}
+
+// timestamps returned by this are guaranteed to be unique
+var lastTimeMutex sync.Mutex
+var lastTime int64 = 0
+
+func uniqueTimestamp() int64 {
+	lastTimeMutex.Lock()
+	defer lastTimeMutex.Unlock()
+
+	t := time.Now().UTC()
+	unixnow := (t.Unix() * 1000) + ((t.UnixNano() / 1000000) % 1000)
+	if unixnow > lastTime {
+		lastTime = unixnow
+		return unixnow
+	} else {
+		lastTime++
+		return lastTime
+	}
+}
 
 // new board creation
 func handleNewBoard(w http.ResponseWriter, r *http.Request) {
@@ -74,13 +122,10 @@ func handleNewBoard(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func newPostHandler(w http.ResponseWriter, r *http.Request, threadid uint32) {
+func newPostHandler(w http.ResponseWriter, r *http.Request, threadid uint32, files []fileContent, board string) {
 	p := new(postData)
 	p.ThreadID = threadid
-	bn, _ := r.Form["board"]
-	if len(bn) > 0 {
-		p.Board = bn[0]
-	}
+	p.Board = board
 	nn, _ := r.Form["name"]
 	if len(nn) > 0 {
 		p.PName = nn[0]
@@ -106,6 +151,10 @@ func newPostHandler(w http.ResponseWriter, r *http.Request, threadid uint32) {
 	db := dbacc.OpenSQL()
 	defer db.Close()
 
+	for i := range files {
+		p.Files = append(p.Files, files[i])
+	}
+
 	if !validateInputPost(db, p) {
 		fmt.Fprintf(w, "bad data (post failed to validate)")
 		return
@@ -117,12 +166,9 @@ func newPostHandler(w http.ResponseWriter, r *http.Request, threadid uint32) {
 	}
 }
 
-func newThreadHandler(w http.ResponseWriter, r *http.Request) {
+func newThreadHandler(w http.ResponseWriter, r *http.Request, files []fileContent, board string) {
 	p := new(postMessage)
-	bn, _ := r.Form["board"]
-	if len(bn) > 0 {
-		p.Board = bn[0]
-	}
+	p.Board = board
 	nn, _ := r.Form["name"]
 	if len(nn) > 0 {
 		p.PName = nn[0]
@@ -139,12 +185,19 @@ func newThreadHandler(w http.ResponseWriter, r *http.Request) {
 	if len(mm) > 0 {
 		p.Message = mm[0]
 	}
+
 	db := dbacc.OpenSQL()
 	defer db.Close()
+
+	for i := range files {
+		p.Files = append(p.Files, files[i])
+	}
+
 	if !validateInputThread(db, p) {
 		fmt.Fprintf(w, "bad data (thread failed to validate)")
 		return
 	}
+
 	if sqlStoreThread(db, p) {
 		render.Execute(w, "threadmade", p)
 	} else {
@@ -159,12 +212,88 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "bad request")
 		return
 	}
+
+	var board string
+	bn, _ := r.Form["board"]
+	if len(bn) > 0 {
+		board = bn[0]
+	}
+
+	var tid uint32
 	thr, _ := r.Form["thread"]
 	if len(thr) > 0 {
 		i, _ := sc.Atoi(thr[0])
-		newPostHandler(w, r, uint32(i))
+		tid = uint32(i)
+	}
+
+	var files []fileContent
+	if r.MultipartForm.File != nil {
+		fhs := r.MultipartForm.File["file"]
+		for i := range fhs {
+			f, err := fhs[i].Open()
+			if err != nil {
+				continue
+			}
+			defer f.Close()
+
+			size, err := f.Seek(0, os.SEEK_END)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("500 internal server error: %s", err), 500)
+				return
+			}
+			_, err = f.Seek(0, os.SEEK_SET)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("500 internal server error: %s", err), 500)
+				return
+			}
+
+			var p fileContent
+
+			ext := filepath.Ext(fhs[i].Filename)
+			mt := mime.TypeByExtension(ext)
+			if mt != "" {
+				mt, _, _ = mime.ParseMediaType(mt)
+			}
+			maxSize, ok := allowedTypes[mt]
+			if !ok {
+				http.Error(w, "file type not allowed", 403) // 403 Forbidden
+				return
+			}
+
+			if size > maxSize {
+				http.Error(w, "file too big", 403) // 403 Forbidden
+				return
+			}
+
+			fname := sc.FormatInt(uniqueTimestamp(), 10) + ext
+			fullname := serveSrcPath(board, fname)
+			tmpname := serveSrcPath(board, ".tmp."+fname)
+			nf, err := os.OpenFile(tmpname, os.O_WRONLY|os.O_CREATE, 0666)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("500 internal server error: %s", err), 500)
+				return
+			}
+			io.Copy(nf, f)
+			nf.Close()
+			os.Rename(tmpname, fullname) // atomic :^)
+
+			p.Name = fname
+			p.Original = fhs[i].Filename
+
+			tname, err := makeThumb(fullname, fname, board, ext, mt, tid == 0)
+			if err != nil {
+				fmt.Printf("error generating thumb for %s: %s\n", fname, err)
+			}
+			p.Thumb = tname
+
+			files = append(files, p)
+		}
+	}
+
+	if tid != 0 {
+		newPostHandler(w, r, tid, files, board)
 	} else {
-		newThreadHandler(w, r)
+		newThreadHandler(w, r, files, board)
 	}
 }
 
