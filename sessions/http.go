@@ -88,5 +88,5 @@ func PruneUserSession(w http.ResponseWriter, r *http.Request) {
 // extracts userinfo from session
 func FillUserInfo(s *SessionStore, usi *UserSessionInfo) {
 	usi.Uid = s.val["uid"].(uint32)
-	usi.Role = s.val["uid"].(uint32)
+	usi.Role = s.val["role"].(uint32)
 }
