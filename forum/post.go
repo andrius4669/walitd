@@ -3,6 +3,7 @@ package forum
 import (
 	"../dbacc"
 	"../render"
+	ss "../sessions"
 	"fmt"
 	"net/http"
 	sc "strconv"
@@ -10,6 +11,18 @@ import (
 
 // new board creation
 func handleNewBoard(w http.ResponseWriter, r *http.Request) {
+	s := ss.GetUserSession(w, r)
+	if s == nil {
+		http.Error(w, "401 unauthorized: not logged in", 401)
+		return
+	}
+	usi := new(ss.UserSessionInfo)
+	ss.FillUserInfo(s, usi)
+	if usi.Role < 2 {
+		http.Error(w, "401 unauthorized: privilege too low", 401)
+		return
+	}
+
 	r.ParseForm()
 	d := new(boardData)
 	bn, _ := r.Form["board"]
@@ -153,4 +166,42 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		newThreadHandler(w, r)
 	}
+}
+
+func handleDelBoard(w http.ResponseWriter, r *http.Request) {
+	s := ss.GetUserSession(w, r)
+	if s == nil {
+		http.Error(w, "401 unauthorized: not logged in", 401)
+		return
+	}
+	usi := new(ss.UserSessionInfo)
+	ss.FillUserInfo(s, usi)
+	if usi.Role < 2 {
+		http.Error(w, "401 unauthorized: privilege too low", 401)
+		return
+	}
+
+	r.ParseForm()
+	var board string
+	bn, _ := r.Form["board"]
+	if len(bn) > 0 {
+		board = bn[0]
+	}
+	if board == "" {
+		fmt.Fprintf(w, "bad data (board name is empty)")
+		return
+	}
+
+	db := dbacc.OpenSQL()
+	defer db.Close()
+
+	if sqlDeleteBoard(db, board) {
+		fmt.Fprintf(w, "board deleted")
+	} else {
+		fmt.Fprintf(w, "failed to delete board")
+	}
+}
+
+func handleDelPost(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 }

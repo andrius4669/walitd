@@ -14,6 +14,7 @@ type boardInfo struct {
 
 type frontPage struct {
 	Boards []boardInfo
+	Mod    bool
 	// maybe add some stats or sth
 }
 

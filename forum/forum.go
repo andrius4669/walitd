@@ -157,6 +157,12 @@ func HandleRequest(w http.ResponseWriter, r *http.Request, pathi int) {
 		case "post":
 			handlePost(w, r)
 			return
+		case "delboard":
+			handleDelBoard(w, r)
+			return
+		case "delpost":
+			handleDelPost(w, r)
+			return
 		}
 		http.Error(w, fmt.Sprintf("501 POST routines not implemented for %s", r.URL.Path), 501)
 	} else {

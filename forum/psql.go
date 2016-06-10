@@ -363,3 +363,27 @@ func sqlStorePost(db *sql.DB, d *postData) bool {
 	d.PostID = pid
 	return true
 }
+
+func sqlDeleteBoard(db *sql.DB, b string) bool {
+	bid, ok := sqlGetBoard(db, b)
+	if !ok {
+		return false
+	}
+	stmt, err := db.Prepare("DELETE FROM forum.files WHERE boardid=$1")
+	panicErr(err)
+	_, err = stmt.Exec(bid)
+	panicErr(err)
+	stmt, err = db.Prepare("DELETE FROM forum.posts WHERE boardid=$1")
+	panicErr(err)
+	_, err = stmt.Exec(bid)
+	panicErr(err)
+	stmt, err = db.Prepare("DELETE FROM forum.threads WHERE boardid=$1")
+	panicErr(err)
+	_, err = stmt.Exec(bid)
+	panicErr(err)
+	stmt, err = db.Prepare("DELETE FROM forum.boards WHERE boardid=$1")
+	panicErr(err)
+	_, err = stmt.Exec(bid)
+	panicErr(err)
+	return true
+}

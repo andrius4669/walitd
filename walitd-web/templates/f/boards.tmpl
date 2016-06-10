@@ -12,15 +12,28 @@
 <th>Name</th>
 <th>Topic</th>
 <th>Description</th>
+{{if $.Mod -}}
+<th>Delete</th>
+{{end -}}
 </tr>
 {{range .Boards -}}
 <tr>
 <td><a href="{{.Board}}/">{{.Board}}</a></td>
 <td>{{.Topic | html}}</td>
 <td>{{.Description | html}}</td>
+{{if $.Mod -}}
+<td>
+<form action="/forum/delboard" method="post">
+<input name="board" type="hidden" value="{{.Board}}" />
+<input name="submit" type="submit" value="Delete" />
+</form>
+</td>
+{{end -}}
 </tr>
 {{end -}}
 </table>
+{{if .Mod -}}
 <a href="/forum/static/boardform.html">New board</a>
+{{end -}}
 </body>
 </html>
